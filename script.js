@@ -194,10 +194,18 @@ function initializeTheme() {
 function applyTheme(theme) {
     const isDark = theme === 'dark';
     document.body.classList.toggle('dark-mode', isDark);
+    document.body.classList.toggle('light-mode', !isDark);
+    document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
     const themeButton = document.querySelector('#theme-toggle');
     if (themeButton) {
         themeButton.textContent = isDark ? 'Light mode' : 'Dark mode';
         themeButton.setAttribute('aria-pressed', String(isDark));
+        themeButton.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    const adminButton = document.querySelector('.btn-admin');
+    if (adminButton) {
+        adminButton.hidden = false;
+        adminButton.style.removeProperty('display');
     }
 }
 
