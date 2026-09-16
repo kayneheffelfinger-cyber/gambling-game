@@ -110,17 +110,23 @@ try {
     // Use the default pool when storage is unavailable.
 }
 
-initializeChatWidget();
-initializeTheme();
-renderPublicUpdates();
-renderChat();
-showUpdateNotice();
-showAccountPrompt();
-loadCurrentTokenBalance();
-updateTokenCounter();
-applyGameAvailability();
-startChatRefresh();
-startPresenceRefresh();
+function initializeApp() {
+    try { initializeChatWidget(); } catch (error) { console.error('Chat initialization failed:', error); }
+    try { initializeTheme(); } catch (error) { console.error('Theme initialization failed:', error); }
+    try { renderPublicUpdates(); } catch (error) { console.error('Updates initialization failed:', error); }
+    try { renderChat(); } catch (error) { console.error('Chat rendering failed:', error); }
+    try { showUpdateNotice(); } catch (error) { console.error('Update notice failed:', error); }
+    try { showAccountPrompt(); } catch (error) { console.error('Account prompt failed:', error); }
+    try { loadCurrentTokenBalance(); updateTokenCounter(); } catch (error) { console.error('Token initialization failed:', error); }
+    try { applyGameAvailability(); } catch (error) { console.error('Game availability failed:', error); }
+    try { startChatRefresh(); startPresenceRefresh(); } catch (error) { console.error('Refresh initialization failed:', error); }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp, { once: true });
+} else {
+    initializeApp();
+}
 
 function initializeChatWidget() {
     document.querySelectorAll('.nav-links a[href="chat.html"]').forEach(link => link.remove());
@@ -947,8 +953,14 @@ function closeAdminPanel() {
     }
 }
 
-document.querySelectorAll('.btn-play').forEach(button => {
-    button.addEventListener('click', () => openGame(button.dataset.game));
+// Use delegated clicks so game buttons keep working even when parts of the page are
+// rendered dynamically or an optional startup feature fails.
+document.addEventListener('click', event => {
+    const button = event.target.closest('.btn-play');
+    if (button) {
+        event.preventDefault();
+        openGame(button.dataset.game);
+    }
 });
 
 function openGame(game) {
