@@ -182,9 +182,9 @@ function setChatVisibility(isOpen) {
 }
 
 function initializeTheme() {
-    let savedTheme = 'light';
+    let savedTheme = 'dark';
     try {
-        savedTheme = localStorage.getItem(themeStorageKey) || 'light';
+        savedTheme = localStorage.getItem(themeStorageKey) || 'dark';
     } catch (error) {
         savedTheme = 'light';
     }
