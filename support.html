@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - Lucky Jackpot</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <div class="logo">💎 Lucky Jackpot</div>
+            <nav class="nav-links">
+                <a href="index.html">Games</a>
+                <a href="features.html">Features</a>
+                <a href="updates.html">Updates</a>
+                <a href="chat.html">Chat</a>
+                <a href="faq.html">FAQ</a>
+                <a href="contact.html">Contact</a>
+                <a href="support.html" aria-current="page">Support</a>
+            </nav>
+            <div class="auth-buttons">
+                <div class="token-wallet" aria-live="polite">Tokens <strong id="token-count">1,000</strong></div>
+                <button class="btn-login">Login</button>
+                <button class="btn-signup">Sign Up</button>
+                <button class="btn-admin" type="button">Admin</button>
+                <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="support-page-section">
+            <div class="container">
+                <div class="support-header">
+                    <div>
+                        <span class="section-kicker">Support</span>
+                        <h1>How can we help?</h1>
+                    </div>
+                    <p>Send a ticket about your account, a game issue, or a bug. Staff and admins can review it from the Support tab in the admin panel.</p>
+                </div>
+                <form class="support-form">
+                    <div class="support-grid">
+                        <label>
+                            <span>Name</span>
+                            <input type="text" name="support-name" placeholder="Your name" maxlength="60">
+                        </label>
+                        <label>
+                            <span>Email</span>
+                            <input type="email" name="support-email" placeholder="you@example.com" maxlength="160">
+                        </label>
+                        <label class="support-full">
+                            <span>Subject</span>
+                            <input type="text" name="support-subject" placeholder="Account access / billing / game issue" maxlength="120" required>
+                        </label>
+                        <label class="support-full">
+                            <span>Describe the issue</span>
+                            <textarea name="support-message" rows="7" maxlength="1000" placeholder="Tell us what happened and what you need help with." required></textarea>
+                        </label>
+                    </div>
+                    <button class="btn-primary" type="submit">Send ticket</button>
+                </form>
+            </div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

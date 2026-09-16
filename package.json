@@ -1,0 +1,7 @@
+{
+  "name": "gambling-game",
+  "private": true,
+  "scripts": {
+    "serve": "node server.js"
+  }
+}

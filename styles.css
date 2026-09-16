@@ -1,14 +1,62 @@
+<<<<<<< HEAD
+=======
+:root {
+    --bg-deep: #0b1020;
+    --bg-mid: #111827;
+    --bg-glow: #1f2937;
+    --panel: rgba(17, 24, 39, 0.75);
+    --panel-soft: rgba(255, 255, 255, 0.08);
+    --gold: #facc15;
+    --gold-strong: #f59e0b;
+    --gold-soft: #fef3c7;
+    --text: #f8fafc;
+    --text-soft: #cbd5e1;
+    --muted: #94a3b8;
+    --shadow: rgba(15, 23, 42, 0.35);
+}
+
+>>>>>>> 2f53e0e (Add gambling game application)
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+<<<<<<< HEAD
+=======
+html {
+    scroll-behavior: smooth;
+}
+
+>>>>>>> 2f53e0e (Add gambling game application)
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
+<<<<<<< HEAD
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+=======
+    background:
+        radial-gradient(circle at top, rgba(250, 204, 21, 0.18), transparent 18%),
+        radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.2), transparent 26%),
+        linear-gradient(135deg, #050b16 0%, #101827 35%, #0f172a 100%);
+}
+
+body:not(.dark-mode) {
+    background:
+        radial-gradient(circle at top, rgba(250, 204, 21, 0.12), transparent 18%),
+        radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.08), transparent 30%),
+        linear-gradient(135deg, #f8fafc 0%, #eef2ff 35%, #f8fafc 100%);
+    color: #0f172a;
+}
+
+.home-page .features-section,
+.home-page .promo-section,
+.home-page .updates-section,
+.home-page .faq-section,
+.home-page .contact-section {
+    display: none;
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .container {
@@ -19,19 +67,61 @@ body {
 
 /* Navbar */
 .navbar {
+<<<<<<< HEAD
     background: rgba(0, 0, 0, 0.9);
+=======
+    background: rgba(15, 23, 42, 0.76);
+>>>>>>> 2f53e0e (Add gambling game application)
     color: white;
     padding: 1rem 0;
     position: sticky;
     top: 0;
     z-index: 1000;
+<<<<<<< HEAD
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+=======
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.28);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body:not(.dark-mode) .navbar {
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+    box-shadow: 0 10px 30px rgba(148, 163, 184, 0.14);
+}
+
+body:not(.dark-mode) .logo,
+body:not(.dark-mode) .nav-links a,
+body:not(.dark-mode) .token-wallet,
+body:not(.dark-mode) .theme-toggle,
+body:not(.dark-mode) .btn-login,
+body:not(.dark-mode) .btn-signup,
+body:not(.dark-mode) .token-wallet strong {
+    color: #0f172a;
+}
+
+body:not(.dark-mode) .nav-links a {
+    color: #0f172a;
+}
+
+body:not(.dark-mode) .theme-toggle,
+body:not(.dark-mode) .btn-login {
+    border-color: rgba(15, 23, 42, 0.4);
+}
+
+body:not(.dark-mode) .token-wallet {
+    background: rgba(15, 23, 42, 0.04);
+    border-color: rgba(250, 204, 21, 0.5);
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .navbar .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+<<<<<<< HEAD
 }
 
 .logo {
@@ -41,29 +131,107 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+=======
+    gap: 0.75rem;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.logo {
+    margin-left: 0;
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    background: linear-gradient(135deg, #fef3c7 0%, #facc15 35%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 10px 30px rgba(250, 204, 21, 0.28);
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .nav-links {
     display: flex;
+<<<<<<< HEAD
     gap: 2rem;
     flex: 1;
     margin-left: 3rem;
+=======
+    gap: 1.1rem;
+    flex: 1;
+    margin-left: 0.25rem;
+    justify-content: flex-start;
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .nav-links a {
     color: white;
     text-decoration: none;
     transition: color 0.3s;
+<<<<<<< HEAD
     font-weight: 500;
+=======
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .nav-links a:hover {
     color: #ffd700;
 }
 
+<<<<<<< HEAD
 .auth-buttons {
     display: flex;
     gap: 1rem;
+=======
+.nav-links a[href="chat.html"] {
+    display: none;
+}
+
+.auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+}
+
+.token-wallet {
+    margin-left: auto;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid rgba(255, 215, 0, 0.55);
+    border-radius: 10px;
+    color: #ddd;
+    font-size: 1rem;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.token-wallet strong {
+    color: #ffd700;
+    font-size: 1.35rem;
+    font-weight: 800;
+    vertical-align: middle;
+}
+
+.theme-toggle {
+    padding: 0.45rem 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    border-radius: 8px;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.theme-toggle:hover {
+    background: white;
+    color: #333;
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .btn-login {
@@ -98,6 +266,7 @@ body {
     transform: translateY(-2px);
 }
 
+<<<<<<< HEAD
 /* Hero Section */
 .hero {
     display: grid;
@@ -121,10 +290,94 @@ body {
     font-size: 1.3rem;
     margin-bottom: 2rem;
     opacity: 0.9;
+=======
+.btn-admin {
+    padding: 0.5rem 0.9rem;
+    border: 1px solid rgba(250, 204, 21, 0.55);
+    border-radius: 8px;
+    background: rgba(250, 204, 21, 0.12);
+    color: #fef3c7;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.btn-admin:hover {
+    background: rgba(250, 204, 21, 0.24);
+    color: #fff7d6;
+}
+
+body:not(.dark-mode) .btn-admin {
+    border-color: rgba(180, 83, 9, 0.45);
+    background: rgba(251, 191, 36, 0.18);
+    color: #92400e;
+}
+
+body:not(.dark-mode) .btn-admin:hover {
+    background: rgba(251, 191, 36, 0.3);
+    color: #78350f;
+}
+
+/* Hero Section */
+.hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 920px);
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 640px;
+    padding: 5rem 20px 3.5rem;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 8% 10% auto;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(250, 204, 21, 0.28), transparent 62%);
+    filter: blur(40px);
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    z-index: 1;
+    padding: 2.5rem 1.5rem 0.5rem;
+}
+
+.hero-content h1 {
+    max-width: 780px;
+    margin-bottom: 1.25rem;
+    font-size: clamp(3rem, 7vw, 5.25rem);
+    line-height: 1.02;
+    letter-spacing: -0.06em;
+    background: linear-gradient(135deg, #fef3c7 0%, #facc15 35%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 10px 35px rgba(250, 204, 21, 0.15);
+}
+
+.hero-content p {
+    max-width: 600px;
+    margin-bottom: 2rem;
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.88);
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .hero-buttons {
     display: flex;
+<<<<<<< HEAD
     gap: 1rem;
 }
 
@@ -139,6 +392,25 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+=======
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-strong) 100%);
+    color: #111827;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 12px 28px rgba(250, 204, 21, 0.35);
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .btn-primary:hover {
@@ -148,6 +420,12 @@ body {
 }
 
 .btn-secondary {
+<<<<<<< HEAD
+=======
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+>>>>>>> 2f53e0e (Add gambling game application)
     background: transparent;
     color: white;
     border: 2px solid white;
@@ -157,6 +435,10 @@ body {
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s;
+<<<<<<< HEAD
+=======
+    text-decoration: none;
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .btn-secondary:hover {
@@ -184,29 +466,56 @@ body {
 
 /* Hero Visual */
 .hero-visual {
+<<<<<<< HEAD
     display: flex;
     justify-content: center;
     align-items: center;
     height: 400px;
+=======
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 270px;
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .card-stack {
     position: relative;
+<<<<<<< HEAD
     width: 200px;
     height: 300px;
+=======
+    width: 230px;
+    height: 300px;
+    filter: drop-shadow(0 18px 38px rgba(15, 23, 42, 0.48));
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .card {
     position: absolute;
+<<<<<<< HEAD
     width: 150px;
     height: 220px;
     background: white;
     border-radius: 15px;
+=======
+    width: 170px;
+    height: 240px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(241,245,249,0.95) 100%);
+    border: 1px solid rgba(148, 163, 184, 0.45);
+    border-radius: 22px;
+>>>>>>> 2f53e0e (Add gambling game application)
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 4rem;
+<<<<<<< HEAD
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+=======
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+>>>>>>> 2f53e0e (Add gambling game application)
     animation: cardFloat 6s ease-in-out infinite;
 }
 
@@ -232,16 +541,87 @@ body {
 }
 
 /* Games Section */
+<<<<<<< HEAD
 .games-section {
     background: white;
     padding: 4rem 0;
+=======
+body:not(.dark-mode) .games-section,
+body:not(.dark-mode) .features-section,
+body:not(.dark-mode) .faq-section,
+body:not(.dark-mode) .contact-section,
+body:not(.dark-mode) .updates-section {
+    background: rgba(255, 255, 255, 0.72);
+    color: #0f172a;
+}
+
+body:not(.dark-mode) .games-section h2,
+body:not(.dark-mode) .features-section h2,
+body:not(.dark-mode) .faq-section h2,
+body:not(.dark-mode) .contact-section h2,
+body:not(.dark-mode) .game-card h3,
+body:not(.dark-mode) .feature h3,
+body:not(.dark-mode) .faq-item h4,
+body:not(.dark-mode) .updates-heading h2,
+body:not(.dark-mode) .update-card h3 {
+    color: #0f172a;
+}
+
+body:not(.dark-mode) .game-card,
+body:not(.dark-mode) .feature,
+body:not(.dark-mode) .faq-item,
+body:not(.dark-mode) .update-card {
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(148, 163, 184, 0.2);
+    color: #0f172a;
+}
+
+body:not(.dark-mode) .game-card p,
+body:not(.dark-mode) .feature p,
+body:not(.dark-mode) .faq-item p,
+body:not(.dark-mode) .updates-heading p,
+body:not(.dark-mode) .update-card li,
+body:not(.dark-mode) .update-card p {
+    color: #475569;
+}
+
+body:not(.dark-mode) .contact-form input,
+body:not(.dark-mode) .contact-form textarea,
+body:not(.dark-mode) .account-form input,
+body:not(.dark-mode) .admin-blocked-word-form input,
+body:not(.dark-mode) .admin-token-input,
+body:not(.dark-mode) .admin-role-select,
+body:not(.dark-mode) .admin-jackpot-actions input,
+body:not(.dark-mode) .admin-update-form textarea {
+    background: rgba(255, 255, 255, 0.9);
+    color: #0f172a;
+    border-color: rgba(148, 163, 184, 0.35);
+}
+
+body:not(.dark-mode) .contact-form input::placeholder,
+body:not(.dark-mode) .account-form input::placeholder {
+    color: #64748b;
+}
+
+.games-section {
+    background: rgba(15, 23, 42, 0.42);
+    padding: 4rem 0 5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .games-section h2 {
     text-align: center;
+<<<<<<< HEAD
     font-size: 2.5rem;
     margin-bottom: 3rem;
     color: #333;
+=======
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    margin-bottom: 3rem;
+    color: #f8fafc;
+    letter-spacing: -0.05em;
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .games-grid {
@@ -251,12 +631,54 @@ body {
 }
 
 .game-card {
+<<<<<<< HEAD
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     padding: 2rem;
     border-radius: 15px;
     text-align: center;
     transition: all 0.3s;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+=======
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.82) 100%);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.22);
+    color: #f8fafc;
+}
+
+.jackpot-card {
+    grid-column: 1 / -1;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, rgba(255, 242, 169, 0.96) 0%, rgba(250, 204, 21, 0.9) 48%, rgba(245, 158, 11, 0.9) 100%);
+    border: 3px solid rgba(254, 243, 199, 0.9);
+    box-shadow: 0 18px 35px rgba(245, 158, 11, 0.42);
+    color: #111827;
+}
+
+.jackpot-card:hover {
+    box-shadow: 0 18px 40px rgba(245, 158, 11, 0.45);
+}
+
+.jackpot-card .game-icon {
+    font-size: 4.5rem;
+}
+
+.jackpot-card h3 {
+    font-size: 2.2rem;
+}
+
+.jackpot-label {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: #7c2d12;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .game-card:hover {
@@ -264,24 +686,116 @@ body {
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
+<<<<<<< HEAD
+=======
+.bet-control {
+    display: grid;
+    gap: 0.35rem;
+    width: min(100%, 240px);
+    color: #ddd;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.bet-control input {
+    width: 100%;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid rgba(255, 215, 0, 0.5);
+    border-radius: 7px;
+    background: white;
+    color: #222;
+    font: inherit;
+}
+
+body.dark-mode .bet-control input {
+    border-color: rgba(250, 204, 21, 0.65);
+    background: #1e293b;
+    color: #f8fafc;
+    color-scheme: dark;
+}
+
+.number-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 42px);
+    gap: 0.5rem;
+}
+
+.number-choice {
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+}
+
+.number-choice.is-selected {
+    border-color: #ffd700;
+    background: #ffd700;
+    color: #222;
+}
+
+.baccarat-table {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(100px, 1fr));
+    gap: 1rem;
+    width: min(100%, 300px);
+}
+
+.baccarat-table > div {
+    display: grid;
+    gap: 0.35rem;
+    place-items: center;
+    padding: 1.25rem 0.75rem;
+    border: 1px solid rgba(255, 215, 0, 0.45);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.baccarat-table strong {
+    color: #ffd700;
+    font-size: 2rem;
+}
+
+>>>>>>> 2f53e0e (Add gambling game application)
 .game-icon {
     font-size: 3rem;
     margin-bottom: 1rem;
     display: inline-block;
+<<<<<<< HEAD
+=======
+    filter: drop-shadow(0 6px 18px rgba(250, 204, 21, 0.15));
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .game-card h3 {
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
+<<<<<<< HEAD
     color: #333;
 }
 
 .game-card p {
     color: #666;
+=======
+    color: #f8fafc;
+}
+
+.jackpot-card h3 {
+    color: #111827;
+}
+
+.game-card p {
+    color: rgba(226, 232, 240, 0.85);
+>>>>>>> 2f53e0e (Add gambling game application)
     margin-bottom: 1.5rem;
     min-height: 50px;
 }
 
+<<<<<<< HEAD
 .btn-play {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -291,6 +805,21 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
+=======
+.jackpot-card p {
+    color: rgba(17, 24, 39, 0.8);
+}
+
+.btn-play {
+    background: linear-gradient(135deg, rgba(148, 163, 184, 0.22), rgba(59, 130, 246, 0.22));
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 0.8rem 1.8rem;
+    border-radius: 999px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .btn-play:hover {
@@ -298,6 +827,20 @@ body {
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
+<<<<<<< HEAD
+=======
+.btn-play:disabled,
+.game-closed .btn-play {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+}
+
+.game-closed {
+    filter: saturate(0.55);
+}
+
+>>>>>>> 2f53e0e (Add gambling game application)
 /* Features Section */
 .features-section {
     background: white;
@@ -318,6 +861,7 @@ body {
 }
 
 .feature {
+<<<<<<< HEAD
     background: #f8f9fa;
     padding: 2rem;
     border-radius: 10px;
@@ -328,6 +872,20 @@ body {
 
 .feature:hover {
     background: #e8eaf6;
+=======
+    background: rgba(15, 23, 42, 0.82);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: center;
+    transition: all 0.3s;
+    border-left: 4px solid #facc15;
+    box-shadow: 0 16px 30px rgba(15, 23, 42, 0.18);
+}
+
+.feature:hover {
+    background: rgba(22, 32, 52, 0.92);
+>>>>>>> 2f53e0e (Add gambling game application)
     transform: translateX(5px);
 }
 
@@ -340,11 +898,19 @@ body {
 .feature h3 {
     font-size: 1.3rem;
     margin-bottom: 0.5rem;
+<<<<<<< HEAD
     color: #333;
 }
 
 .feature p {
     color: #666;
+=======
+    color: #f8fafc;
+}
+
+.feature p {
+    color: #cbd5e1;
+>>>>>>> 2f53e0e (Add gambling game application)
     font-size: 0.95rem;
 }
 
@@ -354,6 +920,112 @@ body {
     background: rgba(0, 0, 0, 0.1);
 }
 
+<<<<<<< HEAD
+=======
+.about-section {
+    min-height: calc(100vh - 90px);
+    padding: 5rem 0;
+    background: white;
+}
+
+.about-content {
+    max-width: 980px;
+    text-align: center;
+}
+
+.about-content h1 {
+    max-width: 780px;
+    margin: 0.5rem auto 1rem;
+    color: #333;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.08;
+}
+
+.about-lead {
+    max-width: 680px;
+    margin: 0 auto 3rem;
+    color: #666;
+    font-size: 1.2rem;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    text-align: left;
+}
+
+.about-grid article {
+    padding: 1.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.about-grid h2 {
+    margin: 0.75rem 0 0.5rem;
+    color: #333;
+    font-size: 1.35rem;
+}
+
+.about-grid p,
+.about-disclaimer {
+    color: #666;
+}
+
+.about-disclaimer {
+    max-width: 780px;
+    margin: 0 auto 2rem;
+    font-size: 0.95rem;
+}
+
+.legal-page {
+    min-height: calc(100vh - 90px);
+    padding: 4rem 0;
+    background: white;
+}
+
+.legal-content {
+    max-width: 820px;
+    color: #4b5563;
+}
+
+.legal-content h1 {
+    margin: 0.5rem 0;
+    color: #222;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+}
+
+.legal-content h2 {
+    margin: 2rem 0 0.5rem;
+    color: #333;
+    font-size: 1.4rem;
+}
+
+.legal-content p {
+    margin-bottom: 1rem;
+}
+
+.legal-updated {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.legal-content a {
+    color: #7c3aed;
+    font-weight: 700;
+}
+
+.legal-note {
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+>>>>>>> 2f53e0e (Add gambling game application)
 .promo-box {
     background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
     padding: 3rem;
@@ -379,9 +1051,389 @@ body {
     margin-bottom: 1.5rem;
 }
 
+<<<<<<< HEAD
 /* FAQ Section */
 .faq-section {
     background: white;
+=======
+/* Public update history */
+.updates-section {
+    padding: 4rem 0;
+    background: #f8f9fa;
+}
+
+.updates-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.section-kicker {
+    color: #667eea;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.updates-heading h2 {
+    margin-top: 0.25rem;
+    color: #333;
+    font-size: 2.5rem;
+}
+
+.updates-heading p {
+    max-width: 280px;
+    color: #666;
+}
+
+.updates-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1rem;
+}
+
+.update-card {
+    padding: 1.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.75);
+    color: #e2e8f0;
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+}
+
+.update-card.is-latest {
+    border-color: rgba(250, 204, 21, 0.7);
+    box-shadow: 0 8px 24px rgba(250, 204, 21, 0.12);
+}
+
+.update-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.update-version {
+    color: #667eea;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.update-latest {
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+    background: #fff3b0;
+    color: #755d00;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.update-card h3 {
+    margin: 0.9rem 0 0.6rem;
+    color: #333;
+}
+
+.update-card ul {
+    display: grid;
+    gap: 0.45rem;
+    padding-left: 1.1rem;
+    color: #666;
+}
+
+.update-card li::marker {
+    color: #667eea;
+}
+
+/* Chat */
+.chat-section {
+    position: fixed;
+    top: 7.25rem;
+    right: 1rem;
+    z-index: 900;
+    display: flex;
+    width: min(360px, calc(100vw - 2rem));
+    height: calc(100vh - 8.5rem);
+    min-height: 520px;
+    padding: 1.15rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 215, 0, 0.28);
+    border-radius: 20px;
+    background: #17152d;
+    color: #f8fafc;
+    box-shadow: 0 24px 55px rgba(15, 23, 42, 0.34);
+}
+
+.chat-section.is-closed {
+    display: none;
+}
+
+.chat-section > .container {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+    padding: 0;
+}
+
+.chat-heading {
+    position: relative;
+    display: block;
+    flex: 0 0 auto;
+    padding: 0.25rem 0.25rem 1rem 2.4rem;
+    margin-bottom: 0.9rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chat-heading h2 {
+    margin-top: 0.35rem;
+    color: #fff;
+    font-size: 1.9rem;
+    letter-spacing: -0.02em;
+}
+
+.chat-heading p {
+    margin-top: 0.35rem;
+    color: #a9adc1;
+    font-size: 0.84rem;
+}
+
+.chat-delete {
+    margin-left: auto;
+    padding: 0.2rem 0.45rem;
+    border: 1px solid rgba(248, 113, 113, 0.45);
+    border-radius: 5px;
+    background: rgba(127, 29, 29, 0.22);
+    color: #fca5a5;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.7rem;
+}
+
+.chat-delete:hover {
+    background: rgba(127, 29, 29, 0.4);
+    color: #fecaca;
+}
+
+.chat-close {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    pointer-events: auto;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.2);
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.chat-close:hover {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: rgba(255, 215, 0, 0.55);
+    color: #ffd700;
+    transform: translateX(-2px);
+}
+
+.chat-close:focus-visible {
+    outline: 2px solid #ffd700;
+    outline-offset: 3px;
+}
+
+.chat-open {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 899;
+    display: none;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 215, 0, 0.5);
+    border-radius: 10px;
+    background: #ffd700;
+    color: #222;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2);
+}
+
+.chat-open.is-visible {
+    display: block;
+}
+
+.chat-layout {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+.chat-panel {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+    padding: 0.65rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.045);
+}
+
+.chat-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.chat-form {
+    display: grid;
+    grid-template-columns: minmax(0, 5.75rem) minmax(0, 1fr) minmax(4.5rem, 5.25rem);
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+.chat-toolbar {
+    flex: 0 0 auto;
+    margin-bottom: 0.65rem;
+}
+
+.chat-toolbar label {
+    color: #666;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.chat-search,
+.chat-form select,
+.chat-form input {
+    min-width: 0;
+    padding: 0.68rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 9px;
+    background: rgba(8, 10, 25, 0.55);
+    color: #fff;
+    font: inherit;
+}
+
+.chat-search {
+    flex: 1;
+}
+
+.chat-messages {
+    display: grid;
+    align-content: start;
+    gap: 0.65rem;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0.25rem 0.2rem 0.5rem;
+    scrollbar-color: rgba(255, 215, 0, 0.45) transparent;
+}
+
+.chat-message {
+    padding: 0.78rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.08);
+    animation: chatMessageIn 0.3s ease both;
+}
+
+.chat-message-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: #fff;
+    font-size: 0.82rem;
+}
+
+.chat-message-meta time {
+    margin-left: auto;
+    color: #8992a1;
+    font-size: 0.75rem;
+}
+
+.chat-message-type {
+    padding: 0.2rem 0.45rem;
+    border-radius: 999px;
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd94d;
+    font-size: 0.7rem;
+    text-transform: capitalize;
+}
+
+.chat-message p {
+    margin-top: 0.35rem;
+    color: #d7d9e3;
+    font-size: 0.88rem;
+    overflow-wrap: anywhere;
+}
+
+.chat-empty {
+    align-self: center;
+    color: #a9adc1;
+    text-align: center;
+}
+
+.chat-form {
+    flex: 0 0 auto;
+    margin-top: 0.65rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chat-form input {
+    width: 100%;
+}
+
+.chat-form select {
+    width: 100%;
+    max-width: 100%;
+}
+
+.chat-form .btn-primary {
+    width: 100%;
+    min-width: 0;
+    min-height: 2.65rem;
+    padding: 0.68rem 0.9rem;
+    border-radius: 9px;
+    font-size: 0.88rem;
+}
+
+.chat-only-big-wins {
+    margin-top: 0.8rem;
+    color: #a9adc1;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.chat-notice {
+    padding: 0.7rem;
+    border-radius: 7px;
+    background: #fee2e2;
+    color: #991b1b;
+    font-size: 0.85rem;
+}
+
+@keyframes chatMessageIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* FAQ Section */
+.faq-section {
+    background: rgba(15, 23, 42, 0.4);
+>>>>>>> 2f53e0e (Add gambling game application)
     padding: 4rem 0;
 }
 
@@ -389,7 +1441,11 @@ body {
     text-align: center;
     font-size: 2.5rem;
     margin-bottom: 3rem;
+<<<<<<< HEAD
     color: #333;
+=======
+    color: #f8fafc;
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .faq-grid {
@@ -399,6 +1455,7 @@ body {
 }
 
 .faq-item {
+<<<<<<< HEAD
     background: #f8f9fa;
     padding: 2rem;
     border-radius: 10px;
@@ -407,18 +1464,37 @@ body {
 
 .faq-item h4 {
     color: #333;
+=======
+    background: rgba(15, 23, 42, 0.82);
+    padding: 2rem;
+    border-radius: 16px;
+    border-left: 4px solid #facc15;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.faq-item h4 {
+    color: #f8fafc;
+>>>>>>> 2f53e0e (Add gambling game application)
     margin-bottom: 0.8rem;
     font-size: 1.1rem;
 }
 
 .faq-item p {
+<<<<<<< HEAD
     color: #666;
+=======
+    color: #cbd5e1;
+>>>>>>> 2f53e0e (Add gambling game application)
     line-height: 1.8;
 }
 
 /* Contact Section */
 .contact-section {
+<<<<<<< HEAD
     background: white;
+=======
+    background: rgba(15, 23, 42, 0.4);
+>>>>>>> 2f53e0e (Add gambling game application)
     padding: 4rem 0;
 }
 
@@ -426,7 +1502,11 @@ body {
     text-align: center;
     font-size: 2.5rem;
     margin-bottom: 2rem;
+<<<<<<< HEAD
     color: #333;
+=======
+    color: #f8fafc;
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .contact-form {
@@ -440,17 +1520,37 @@ body {
 .contact-form input,
 .contact-form textarea {
     padding: 1rem;
+<<<<<<< HEAD
     border: 2px solid #ddd;
     border-radius: 8px;
     font-family: inherit;
     font-size: 1rem;
     transition: border-color 0.3s;
+=======
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.72);
+    color: #f8fafc;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+    color: #94a3b8;
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .contact-form input:focus,
 .contact-form textarea:focus {
     outline: none;
+<<<<<<< HEAD
     border-color: #667eea;
+=======
+    border-color: rgba(250, 204, 21, 0.7);
+    box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.12);
+>>>>>>> 2f53e0e (Add gambling game application)
 }
 
 .contact-form button {
@@ -518,8 +1618,1275 @@ body {
     margin-bottom: 0.5rem;
 }
 
+<<<<<<< HEAD
 /* Responsive Design */
 @media (max-width: 768px) {
+=======
+/* Game modal */
+body.modal-open {
+    overflow: hidden;
+}
+
+.game-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: none;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(11, 14, 35, 0.78);
+}
+
+.game-modal.is-open {
+    display: grid;
+}
+
+.update-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(11, 14, 35, 0.78);
+}
+
+.update-dialog {
+    position: relative;
+    width: min(100%, 460px);
+    padding: 2.25rem;
+    border: 1px solid rgba(255, 215, 0, 0.45);
+    border-radius: 18px;
+    background: #17152d;
+    color: white;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+}
+
+.update-dialog h2 {
+    margin: 0.3rem 0 0.5rem;
+    font-size: 2rem;
+}
+
+.update-intro {
+    color: #ddd;
+}
+
+.update-list {
+    display: grid;
+    gap: 0.8rem;
+    margin: 1.5rem 0;
+    padding-left: 1.25rem;
+    color: #f2f2f2;
+}
+
+.update-list li::marker {
+    color: #ffd700;
+}
+
+.update-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.9rem;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.account-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 4000;
+    display: none;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(11, 14, 35, 0.86);
+}
+
+.account-modal.is-open {
+    display: grid;
+}
+
+.account-dialog {
+    position: relative;
+    width: min(100%, 460px);
+    padding: 2.25rem;
+    border: 1px solid rgba(255, 215, 0, 0.45);
+    border-radius: 18px;
+    background: #17152d;
+    color: white;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+}
+
+.account-dialog h2 {
+    margin: 0.3rem 0 0.5rem;
+    font-size: 2rem;
+}
+
+.account-intro {
+    color: #ddd;
+}
+
+.account-form {
+    display: grid;
+    gap: 0.55rem;
+    margin-top: 1.5rem;
+}
+
+.account-form label {
+    color: #ddd;
+    font-size: 0.9rem;
+}
+
+.account-form input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 7px;
+    background: rgba(15, 23, 42, 0.68);
+    color: #f8fafc;
+    font: inherit;
+}
+
+.account-form input::placeholder {
+    color: #94a3b8;
+}
+
+.account-form input:focus {
+    outline: none;
+    border-color: rgba(250, 204, 21, 0.75);
+    box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.12);
+}
+
+.account-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    margin-top: 0.35rem;
+    line-height: 1.45;
+}
+
+.account-consent input {
+    width: auto;
+    flex: 0 0 auto;
+    margin-top: 0.2rem;
+}
+
+.account-consent a {
+    color: #ffd700;
+}
+
+.account-message {
+    min-height: 1.5em;
+    margin: 0.4rem 0;
+    color: #ffd700;
+    font-size: 0.9rem;
+}
+
+.account-switch {
+    margin-top: 1rem;
+    border: 0;
+    background: transparent;
+    color: #ffd700;
+    cursor: pointer;
+    font: inherit;
+}
+
+.account-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.9rem;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.admin-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    display: none;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(11, 14, 35, 0.9);
+}
+
+.admin-modal.is-open {
+    display: grid;
+}
+
+.admin-dialog {
+    position: relative;
+    width: min(100%, 860px);
+    max-height: min(90vh, 720px);
+    overflow: auto;
+    padding: 2.25rem;
+    border: 1px solid rgba(255, 215, 0, 0.5);
+    border-radius: 18px;
+    background: #17152d;
+    color: white;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+}
+
+.admin-dialog h2 {
+    margin: 0.3rem 0 1.5rem;
+    font-size: 2rem;
+}
+
+.admin-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-header h2 {
+    margin-bottom: 0.25rem;
+}
+
+.admin-subtitle {
+    margin: 0;
+    color: #aab4c7;
+}
+
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.65rem;
+    border: 1px solid rgba(74, 222, 128, 0.35);
+    border-radius: 999px;
+    color: #86efac;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+.admin-badge i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.15);
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 0.35rem;
+    margin-bottom: 1.5rem;
+    padding: 0.3rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.admin-tab {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #aab4c7;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+}
+
+.admin-tab:hover,
+.admin-tab.is-active {
+    background: #ffd700;
+    color: #17152d;
+}
+
+.admin-tab-panel {
+    min-height: 250px;
+}
+
+.admin-overview-note,
+.admin-update-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    padding: 1rem;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    border-radius: 10px;
+    background: rgba(74, 222, 128, 0.08);
+}
+
+.admin-overview-note p,
+.admin-update-card p {
+    margin: 0.25rem 0 0;
+    color: #aab4c7;
+}
+
+.admin-overview-dot {
+    width: 10px;
+    height: 10px;
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #4ade80;
+}
+
+.admin-update-card {
+    border-color: rgba(255, 215, 0, 0.25);
+    background: rgba(255, 215, 0, 0.08);
+}
+
+.admin-update-icon {
+    color: #ffd700;
+    font-size: 1.5rem;
+}
+
+.admin-game-list {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.admin-game-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.admin-game-row > div {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.admin-game-status {
+    font-size: 0.8rem;
+}
+
+.admin-game-status.is-open {
+    color: #86efac;
+}
+
+.admin-game-status.is-closed {
+    color: #fca5a5;
+}
+
+.admin-game-toggle {
+    padding: 0.55rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 7px;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.admin-game-toggle.is-close:hover {
+    border-color: #fca5a5;
+    color: #fca5a5;
+}
+
+.admin-game-toggle.is-open {
+    border-color: #86efac;
+    color: #86efac;
+}
+
+.admin-jackpot-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    border-radius: 9px;
+    background: rgba(255, 215, 0, 0.08);
+}
+
+.admin-jackpot-control > div {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.admin-blocked-word-form {
+    display: grid;
+    gap: 0.45rem;
+    margin-bottom: 1rem;
+}
+
+.admin-blocked-word-form label {
+    color: #cbd5e1;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.admin-blocked-word-form > div,
+.admin-blocked-word {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+}
+
+.admin-blocked-word-form input {
+    min-width: 0;
+    flex: 1;
+    padding: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 7px;
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+    font: inherit;
+}
+
+.admin-blocked-word-list {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.admin-chat-moderation-heading {
+    margin-top: 1.5rem;
+}
+
+.admin-chat-message-list {
+    display: grid;
+    gap: 0.55rem;
+}
+
+.admin-chat-message {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.admin-chat-message p {
+    margin-top: 0.2rem;
+    color: #cbd5e1;
+    overflow-wrap: anywhere;
+}
+
+.admin-blocked-word {
+    padding: 0.65rem 0.8rem;
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #f8fafc;
+}
+
+.admin-jackpot-actions {
+    display: grid;
+    gap: 0.45rem;
+    justify-items: end;
+}
+
+.admin-jackpot-actions label {
+    color: #cbd5e1;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.admin-jackpot-actions input {
+    width: 8rem;
+    padding: 0.55rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 7px;
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+    font: inherit;
+}
+
+.admin-jackpot-actions > div {
+    display: flex;
+    gap: 0.45rem;
+}
+
+.admin-jackpot-control span,
+.admin-jackpot-control p {
+    color: #cbd5e1;
+    font-size: 0.8rem;
+}
+
+.jackpot-pool {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0 auto 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    border-radius: 9px;
+    background: rgba(255, 215, 0, 0.1);
+    text-align: center;
+}
+
+.jackpot-pool span,
+.jackpot-pool small {
+    color: #7c2d12;
+}
+
+.jackpot-pool strong {
+    color: #78350f;
+    font-size: 2rem;
+}
+
+.jackpot-entries {
+    color: #7c2d12;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.admin-form {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+}
+
+.admin-form label {
+    color: #ddd;
+}
+
+.admin-form input,
+.admin-form textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #ddd;
+    border-radius: 7px;
+    background: rgba(2, 6, 23, 0.3);
+    color: #f8fafc;
+    font: inherit;
+    resize: vertical;
+}
+
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+}
+
+.admin-stats div {
+    padding: 1rem;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-stats strong,
+.admin-stats span {
+    display: block;
+}
+
+.admin-stats strong {
+    color: #ffd700;
+    font-size: 1.5rem;
+}
+
+.admin-stats span {
+    color: #ccc;
+    font-size: 0.85rem;
+}
+
+.admin-dashboard h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.admin-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.admin-section-heading > span {
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
+.admin-account-list {
+    display: grid;
+    gap: 0.6rem;
+    max-height: 260px;
+    overflow: auto;
+}
+
+.admin-account {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-account-header {
+    padding: 0.35rem 0.8rem;
+    border: 0;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+}
+
+.admin-account-identity {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+}
+
+.admin-avatar {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ffd700, #f59e0b);
+    color: #17152d;
+    font-weight: 800;
+}
+
+.admin-account-identity div {
+    display: grid;
+    min-width: 0;
+    gap: 0.1rem;
+}
+
+.admin-account-identity strong,
+.admin-account-identity span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-account-identity .admin-presence {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: #94a3b8;
+    font-size: 0.72rem;
+}
+
+.admin-presence i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #94a3b8;
+}
+
+.admin-presence.is-online {
+    color: #86efac;
+}
+
+.admin-presence.is-online i {
+    background: #22c55e;
+}
+
+.admin-account span {
+    color: #ccc;
+    overflow-wrap: anywhere;
+}
+
+.admin-account-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+.admin-role-select,
+.admin-token-input,
+.admin-jackpot-actions input,
+.admin-blocked-word-form input,
+.admin-form input,
+.admin-form textarea {
+    padding: 0.45rem 0.55rem;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 7px;
+    background: rgba(15, 23, 42, 0.68);
+    color: #f8fafc;
+    font: inherit;
+}
+
+.admin-role-select {
+    font-size: 0.8rem;
+}
+
+.admin-role-label {
+    color: #cbd5e1;
+    font-size: 0.8rem;
+    text-transform: capitalize;
+}
+
+.admin-token-box {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 160px;
+}
+
+.admin-token-box label {
+    color: #cbd5e1;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.admin-token-box > div {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.admin-token-input {
+    width: 92px;
+}
+
+.admin-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Dark mode */
+body.dark-mode {
+    background: #0f172a;
+    color: #e5e7eb;
+}
+
+body.dark-mode .games-section,
+body.dark-mode .features-section,
+body.dark-mode .faq-section,
+body.dark-mode .contact-section,
+body.dark-mode .updates-section {
+    background: #111827;
+    color: #e5e7eb;
+}
+
+/* Support page */
+.support-page-section {
+    min-height: calc(100vh - 90px);
+    padding: 5rem 0;
+    background: rgba(15, 23, 42, 0.58);
+    color: #f8fafc;
+}
+
+.support-header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.support-header h1,
+.support-header h2 {
+    margin-top: 0.35rem;
+    color: #f8fafc;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    line-height: 1.05;
+}
+
+.support-header p {
+    max-width: 440px;
+    color: #cbd5e1;
+}
+
+.support-form {
+    max-width: 820px;
+    padding: 1.5rem;
+    border: 1px solid rgba(250, 204, 21, 0.28);
+    border-radius: 16px;
+    background: rgba(17, 24, 39, 0.82);
+    box-shadow: 0 20px 50px rgba(2, 6, 23, 0.28);
+}
+
+.support-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.support-grid label {
+    display: grid;
+    gap: 0.4rem;
+    color: #e2e8f0;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.support-full {
+    grid-column: 1 / -1;
+}
+
+.support-form input,
+.support-form textarea {
+    width: 100%;
+    padding: 0.85rem 0.95rem;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 9px;
+    background: rgba(2, 6, 23, 0.48);
+    color: #f8fafc;
+    font: inherit;
+    resize: vertical;
+}
+
+.support-form input::placeholder,
+.support-form textarea::placeholder {
+    color: #94a3b8;
+}
+
+.support-form input:focus,
+.support-form textarea:focus {
+    outline: 2px solid rgba(250, 204, 21, 0.55);
+    outline-offset: 1px;
+}
+
+body:not(.dark-mode) .support-page-section {
+    background: rgba(226, 232, 240, 0.72);
+    color: #0f172a;
+}
+
+body:not(.dark-mode) .support-header h1,
+body:not(.dark-mode) .support-header h2 {
+    color: #0f172a;
+}
+
+body:not(.dark-mode) .support-header p,
+body:not(.dark-mode) .support-grid label {
+    color: #475569;
+}
+
+body:not(.dark-mode) .support-form {
+    border-color: rgba(100, 116, 139, 0.25);
+    background: rgba(248, 250, 252, 0.9);
+}
+
+body:not(.dark-mode) .support-form input,
+body:not(.dark-mode) .support-form textarea {
+    border-color: rgba(100, 116, 139, 0.35);
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+body:not(.dark-mode) .support-form input::placeholder,
+body:not(.dark-mode) .support-form textarea::placeholder {
+    color: #64748b;
+}
+
+body:not(.dark-mode) .features-section,
+body:not(.dark-mode) .about-section,
+body:not(.dark-mode) .legal-page {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+body:not(.dark-mode) .about-content h1,
+body:not(.dark-mode) .legal-content h1,
+body:not(.dark-mode) .about-grid h2,
+body:not(.dark-mode) .legal-content h2 {
+    color: #0f172a;
+}
+
+body:not(.dark-mode) .about-grid article {
+    border-color: rgba(100, 116, 139, 0.25);
+    background: rgba(248, 250, 252, 0.86);
+}
+
+body:not(.dark-mode) .about-lead,
+body:not(.dark-mode) .about-grid p,
+body:not(.dark-mode) .about-disclaimer,
+body:not(.dark-mode) .legal-content {
+    color: #475569;
+}
+
+body.dark-mode .games-section h2,
+body.dark-mode .features-section h2,
+body.dark-mode .faq-section h2,
+body.dark-mode .contact-section h2,
+body.dark-mode .updates-heading h2,
+body.dark-mode .game-card h3,
+body.dark-mode .feature h3,
+body.dark-mode .faq-item h4,
+body.dark-mode .update-card h3 {
+    color: #f8fafc;
+}
+
+body.dark-mode .game-card {
+    background: linear-gradient(135deg, #1f2937 0%, #263449 100%);
+}
+
+body.dark-mode .game-card p,
+body.dark-mode .feature p,
+body.dark-mode .faq-item p,
+body.dark-mode .updates-heading p,
+body.dark-mode .update-card ul {
+    color: #cbd5e1;
+}
+
+body.dark-mode .update-card {
+    background: #1f2937;
+    color: #e2e8f0;
+}
+
+body.dark-mode .feature,
+body.dark-mode .faq-item {
+    background: #1f2937;
+}
+
+body.dark-mode .feature:hover {
+    background: #263449;
+}
+
+body.dark-mode .contact-form input,
+body.dark-mode .contact-form textarea {
+    border-color: #475569;
+    background: #1e293b;
+    color: #f8fafc;
+}
+
+body.dark-mode .contact-form input::placeholder,
+body.dark-mode .contact-form textarea::placeholder {
+    color: #94a3b8;
+}
+
+body.dark-mode .chat-section {
+    border-color: #334155;
+    background: #111827;
+    color: #e5e7eb;
+}
+
+body.dark-mode .chat-heading h2,
+body.dark-mode .chat-toolbar label {
+    color: #f8fafc;
+}
+
+body.dark-mode .chat-heading p,
+body.dark-mode .chat-message p {
+    color: #cbd5e1;
+}
+
+body.dark-mode .chat-panel,
+body.dark-mode .chat-message {
+    border-color: #334155;
+    background: #1f2937;
+}
+
+body.dark-mode .chat-search,
+body.dark-mode .chat-form select,
+body.dark-mode .chat-form input {
+    border-color: #475569;
+    background: #0f172a;
+    color: #f8fafc;
+}
+
+body.dark-mode .chat-close {
+    background: #334155;
+    color: #f8fafc;
+}
+
+body.dark-mode .chat-open {
+    background: #facc15;
+}
+
+body.dark-mode .chat-notice {
+    background: #450a0a;
+    color: #fecaca;
+}
+
+.game-dialog {
+    position: relative;
+    width: min(100%, 520px);
+    padding: 2rem;
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    border-radius: 18px;
+    background: #17152d;
+    color: white;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+}
+
+.game-dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.game-kicker {
+    color: #ffd700;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.game-dialog h2 {
+    margin-top: 0.25rem;
+    font-size: 2rem;
+}
+
+.game-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.9rem;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.credit-counter {
+    padding: 0.55rem 0.75rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ddd;
+    font-size: 0.85rem;
+}
+
+.credit-counter strong {
+    display: block;
+    color: #ffd700;
+    font-size: 1.25rem;
+    text-align: right;
+}
+
+.game-board {
+    display: grid;
+    justify-items: center;
+    gap: 1.25rem;
+    padding: 1.75rem 1rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.slot-reels,
+.dice-result,
+.poker-hand {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.slot-reels span,
+.dice-result span {
+    display: grid;
+    width: 76px;
+    height: 76px;
+    place-items: center;
+    border-radius: 10px;
+    background: white;
+    color: #17152d;
+    font-size: 2.6rem;
+}
+
+.slot-reels span.is-spinning {
+    animation: reelSpin 0.18s linear infinite;
+}
+
+.game-action:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+@keyframes reelSpin {
+    0% {
+        transform: translateY(-8px) rotateX(0deg);
+        opacity: 0.55;
+    }
+    50% {
+        transform: translateY(8px) rotateX(180deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-8px) rotateX(360deg);
+        opacity: 0.55;
+    }
+}
+
+.dice-result span {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.dice-result span.is-rolling {
+    animation: diceTumble 0.28s ease-in-out infinite;
+}
+
+@keyframes diceTumble {
+    0% {
+        transform: translateY(-6px) rotate(-12deg) scale(0.95);
+    }
+    50% {
+        transform: translateY(6px) rotate(12deg) scale(1.05);
+    }
+    100% {
+        transform: translateY(-6px) rotate(-12deg) scale(0.95);
+    }
+}
+
+.playing-card {
+    display: flex;
+    width: 58px;
+    height: 82px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    background: white;
+    color: #17152d;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.playing-card b {
+    font-size: 1.45rem;
+}
+
+.red-card {
+    color: #d62839;
+}
+
+.card-placeholder {
+    padding: 2rem;
+    color: #bbb;
+}
+
+.blackjack-table {
+    display: grid;
+    width: 100%;
+    gap: 1.5rem;
+}
+
+.blackjack-table > div {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.hidden-card {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.coin-result {
+    display: grid;
+    width: 108px;
+    height: 108px;
+    place-items: center;
+    border: 5px solid #ffd700;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #ffd700);
+    color: #17152d;
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.coin-result.has-result {
+    animation: coinFlip 0.65s ease-out;
+}
+
+@keyframes coinFlip {
+    0% {
+        transform: rotateY(0) scale(0.7);
+    }
+    70% {
+        transform: rotateY(540deg) scale(1.08);
+    }
+    100% {
+        transform: rotateY(720deg) scale(1);
+    }
+}
+
+.roulette-number {
+    display: grid;
+    width: 100px;
+    height: 100px;
+    place-items: center;
+    border: 5px solid #ffd700;
+    border-radius: 50%;
+    background: #b51e35;
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.game-label {
+    width: min(100%, 240px);
+    color: #ddd;
+    font-size: 0.9rem;
+}
+
+.game-select {
+    width: min(100%, 240px);
+    padding: 0.75rem;
+    border: 0;
+    border-radius: 7px;
+    background: white;
+    color: #222;
+    font: inherit;
+}
+
+.game-action {
+    padding: 0.85rem 1.5rem;
+    border: 0;
+    border-radius: 24px;
+    background: #ffd700;
+    color: #222;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.game-action:hover {
+    background: #ffed4e;
+}
+
+.game-help,
+.game-message {
+    color: #ccc;
+    text-align: center;
+}
+
+.game-message {
+    min-height: 1.6em;
+    margin-top: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .chat-section {
+        top: 4.75rem;
+        right: 0.5rem;
+        width: calc(100vw - 1.5rem);
+        height: calc(100vh - 5.5rem);
+        min-height: 0;
+    }
+
+    .chat-form {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .chat-form select {
+        grid-column: 1 / -1;
+    }
+
+    .chat-form input {
+        min-width: 0;
+    }
+
+>>>>>>> 2f53e0e (Add gambling game application)
     .hero {
         grid-template-columns: 1fr;
         padding: 2rem 0;
@@ -538,6 +2905,15 @@ body {
         gap: 1rem;
     }
 
+<<<<<<< HEAD
+=======
+    .auth-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+>>>>>>> 2f53e0e (Add gambling game application)
     .hero-buttons {
         flex-direction: column;
     }
@@ -549,7 +2925,12 @@ body {
 
     .games-grid,
     .features-grid,
+<<<<<<< HEAD
     .faq-grid {
+=======
+    .faq-grid,
+    .about-grid {
+>>>>>>> 2f53e0e (Add gambling game application)
         grid-template-columns: 1fr;
     }
 
@@ -568,4 +2949,88 @@ body {
     .bonus-amount {
         font-size: 1.5rem;
     }
+<<<<<<< HEAD
+=======
+
+    .updates-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .support-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .support-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .support-full {
+        grid-column: auto;
+    }
+
+    .admin-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1050px) and (min-width: 769px) {
+    .nav-links {
+        gap: 1rem;
+        margin-left: 1.25rem;
+    }
+
+    .auth-buttons {
+        gap: 0.5rem;
+    }
+
+    .btn-login,
+    .btn-signup {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+}
+
+@media (max-height: 800px) and (min-width: 769px) {
+    .navbar {
+        padding: 0.65rem 0;
+    }
+
+    .hero {
+        padding: 2.5rem 0;
+    }
+
+    .hero-content h1 {
+        margin-bottom: 0.6rem;
+        font-size: 3rem;
+    }
+
+    .hero-content p {
+        margin-bottom: 1.25rem;
+    }
+
+    .hero-visual {
+        height: 300px;
+    }
+
+    .games-section,
+    .features-section,
+    .updates-section,
+    .promo-section,
+    .faq-section,
+    .contact-section {
+        padding: 3rem 0;
+    }
+
+    .games-section h2,
+    .features-section h2,
+    .updates-heading h2,
+    .faq-section h2,
+    .contact-section h2 {
+        margin-bottom: 2rem;
+    }
+>>>>>>> 2f53e0e (Add gambling game application)
 }
