@@ -118,6 +118,7 @@ function initializeApp() {
     try { showUpdateNotice(); } catch (error) { console.error('Update notice failed:', error); }
     try { showAccountPrompt(); } catch (error) { console.error('Account prompt failed:', error); }
     try { loadCurrentTokenBalance(); updateTokenCounter(); } catch (error) { console.error('Token initialization failed:', error); }
+    try { startBankRefresh(); } catch (error) { console.error('Bank initialization failed:', error); }
     try { applyGameAvailability(); } catch (error) { console.error('Game availability failed:', error); }
     try { startChatRefresh(); startPresenceRefresh(); } catch (error) { console.error('Refresh initialization failed:', error); }
 }
@@ -332,6 +333,131 @@ function loadCurrentTokenBalance() {
 function getAccountTokens(account) {
     return Number.isFinite(Number(account.tokens)) ? Number(account.tokens) : 1000;
 }
+const bankStorageKey = 'lucky-jackpot-bank-v1';
+const bankRateStorageKey = 'lucky-jackpot-bank-rate-v1';
+const bankRateRefreshMs = 5 * 60 * 1000;
+const bankInterestIntervalMs = 24 * 60 * 60 * 1000;
+
+function getBankState() {
+    const account = getCurrentAccount();
+    const key = account?.email ? `${bankStorageKey}:${account.email}` : bankStorageKey;
+    try {
+        const saved = JSON.parse(localStorage.getItem(key) || 'null');
+        if (saved && Number.isFinite(Number(saved.balance))) {
+            return {
+                balance: Math.max(0, Number(saved.balance)),
+                lastInterestAt: Number(saved.lastInterestAt) || Date.now()
+            };
+        }
+    } catch (error) {}
+    return { balance: 0, lastInterestAt: Date.now() };
+}
+
+function saveBankState(state) {
+    const account = getCurrentAccount();
+    const key = account?.email ? `${bankStorageKey}:${account.email}` : bankStorageKey;
+    try { localStorage.setItem(key, JSON.stringify(state)); } catch (error) {}
+}
+
+function getBankRateState() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(bankRateStorageKey) || 'null');
+        if (saved && Number.isFinite(Number(saved.rate)) && Number.isFinite(Number(saved.changedAt))) return saved;
+    } catch (error) {}
+    return { rate: 0.02, changedAt: Date.now() };
+}
+
+function getCurrentBankRate() {
+    let state = getBankRateState();
+    const now = Date.now();
+    if (now - state.changedAt >= bankRateRefreshMs) {
+        const periods = Math.floor((now - state.changedAt) / bankRateRefreshMs);
+        for (let i = 0; i < periods; i += 1) state.rate = (Math.floor(Math.random() * 401) + 100) / 10000;
+        state.changedAt += periods * bankRateRefreshMs;
+        try { localStorage.setItem(bankRateStorageKey, JSON.stringify(state)); } catch (error) {}
+    }
+    return state.rate;
+}
+
+function formatBankTime(ms) {
+    if (ms <= 0) return 'Ready now';
+    const totalSeconds = Math.ceil(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return hours ? `${hours}h ${minutes}m` : minutes ? `${minutes}m ${seconds}s` : `${seconds}s`;
+}
+
+function processBankInterest() {
+    const state = getBankState();
+    const now = Date.now();
+    if (state.balance <= 0 || now - state.lastInterestAt < bankInterestIntervalMs) {
+        saveBankState(state);
+        return state;
+    }
+    const periods = Math.floor((now - state.lastInterestAt) / bankInterestIntervalMs);
+    const rate = getCurrentBankRate();
+    state.balance *= Math.pow(1 + rate, periods);
+    state.lastInterestAt += periods * bankInterestIntervalMs;
+    saveBankState(state);
+    return state;
+}
+
+function renderBank() {
+    const state = processBankInterest();
+    const rate = getCurrentBankRate();
+    const balanceEl = document.querySelector('#bank-balance');
+    const rateEl = document.querySelector('#bank-rate');
+    const nextEl = document.querySelector('#bank-next-interest');
+    if (balanceEl) balanceEl.textContent = Math.floor(state.balance).toLocaleString();
+    if (rateEl) rateEl.textContent = `${(rate * 100).toFixed(2)}%`;
+    if (nextEl) nextEl.textContent = formatBankTime(Math.max(0, state.lastInterestAt + bankInterestIntervalMs - Date.now()));
+}
+
+function bankDeposit() {
+    if (!getCurrentAccount()) { openAccountModal('login'); return; }
+    const amount = Number(window.prompt('How many tokens would you like to deposit?', '100'));
+    if (!Number.isFinite(amount) || amount <= 0) return;
+    const wholeAmount = Math.floor(amount);
+    if (wholeAmount > gameState.credits) {
+        window.alert('You do not have enough wallet tokens.');
+        return;
+    }
+    gameState.credits -= wholeAmount;
+    const state = processBankInterest();
+    state.balance += wholeAmount;
+    saveBankState(state);
+    persistTokenBalance();
+    updateTokenCounter();
+    renderBank();
+}
+
+function bankWithdraw() {
+    if (!getCurrentAccount()) { openAccountModal('login'); return; }
+    const state = processBankInterest();
+    const amount = Number(window.prompt(`How many tokens would you like to withdraw? (Available: ${Math.floor(state.balance).toLocaleString()})`, '100'));
+    if (!Number.isFinite(amount) || amount <= 0) return;
+    const wholeAmount = Math.floor(amount);
+    if (wholeAmount > state.balance) {
+        window.alert('You do not have enough bank tokens.');
+        return;
+    }
+    state.balance -= wholeAmount;
+    gameState.credits += wholeAmount;
+    saveBankState(state);
+    persistTokenBalance();
+    updateTokenCounter();
+    renderBank();
+}
+
+function startBankRefresh() {
+    renderBank();
+    if (window.bankRefreshTimer) window.clearInterval(window.bankRefreshTimer);
+    window.bankRefreshTimer = window.setInterval(() => {
+        if (!document.hidden) renderBank();
+    }, 1000);
+}
+
 
 function escapeHtml(value) {
     return String(value).replace(/[&<>"']/g, character => ({
@@ -1502,6 +1628,13 @@ document.querySelector('.btn-login')?.addEventListener('click', function() {
 
 document.querySelector('.btn-admin')?.addEventListener('click', openAdminPanel);
 
+document.addEventListener('click', event => {
+    const bankButton = event.target.closest('[data-bank-action]');
+    if (!bankButton) return;
+    event.preventDefault();
+    if (bankButton.dataset.bankAction === 'deposit') bankDeposit();
+    if (bankButton.dataset.bankAction === 'withdraw') bankWithdraw();
+});
 document.querySelector('#theme-toggle')?.addEventListener('click', function() {
     const currentIsDark = document.body.classList.contains('dark-mode');
     const nextTheme = currentIsDark ? 'light' : 'dark';
