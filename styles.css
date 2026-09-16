@@ -2782,3 +2782,307 @@ body.dark-mode .chat-notice {
         margin-bottom: 2rem;
     }
 }
+
+/* ===== Lucky Jackpot polished casino dashboard UI ===== */
+:root {
+    --ui-bg: #020b1c;
+    --ui-panel: #061630;
+    --ui-panel-2: #081d3d;
+    --ui-border: #0b70df;
+    --ui-blue: #087cff;
+    --ui-blue-bright: #2aa7ff;
+    --ui-text: #f5f8ff;
+    --ui-muted: #a9c1e5;
+}
+
+body,
+body.dark-mode {
+    background:
+        radial-gradient(circle at 72% 8%, rgba(0, 105, 255, .18), transparent 28%),
+        radial-gradient(circle at 12% 45%, rgba(0, 83, 255, .08), transparent 30%),
+        linear-gradient(145deg, #010713 0%, #031128 48%, #020a18 100%);
+    color: var(--ui-text);
+}
+
+body:not(.dark-mode) {
+    background:
+        radial-gradient(circle at 72% 8%, rgba(0, 105, 255, .18), transparent 28%),
+        linear-gradient(145deg, #010713 0%, #031128 48%, #020a18 100%);
+    color: var(--ui-text);
+}
+
+.container { max-width: 1480px; padding-left: 24px; padding-right: 24px; }
+
+.navbar {
+    background: rgba(2, 9, 24, .94) !important;
+    border-bottom: 1px solid rgba(42, 167, 255, .32);
+    box-shadow: 0 8px 28px rgba(0,0,0,.35);
+    padding: .7rem 0;
+}
+
+.navbar .container { min-height: 58px; }
+.logo {
+    color: #fff;
+    -webkit-text-fill-color: initial;
+    background: none;
+    font-size: 1.9rem;
+    white-space: nowrap;
+}
+.logo::first-letter { color: #ffc400; }
+
+.nav-links { gap: 1.5rem; margin-left: 1rem; }
+.nav-links a { color: #dbeaff !important; font-weight: 650; }
+.nav-links a:hover { color: #38aaff !important; }
+
+.auth-buttons { gap: .55rem; }
+.token-wallet {
+    color: #e9f3ff !important;
+    background: rgba(3, 20, 47, .9) !important;
+    border: 1px solid rgba(42,167,255,.5);
+    border-radius: 10px;
+    padding: .45rem .75rem;
+}
+.token-wallet strong { color: #fff !important; }
+
+.btn-login, .btn-signup, .btn-admin, .theme-toggle {
+    border-radius: 9px;
+    padding: .55rem .85rem;
+}
+.btn-login {
+    color: #dcecff !important;
+    border: 1px solid #1f6fbf;
+    background: #061630;
+}
+.btn-signup, .btn-admin {
+    background: linear-gradient(135deg,#087cff,#1767e9);
+    color: white !important;
+    border: 1px solid #2aa7ff;
+}
+.theme-toggle {
+    color: white !important;
+    border: 1px solid #31557f;
+    background: #061630;
+}
+
+.hero {
+    min-height: 0;
+    padding: 22px 24px 18px;
+    grid-template-columns: 1fr;
+    text-align: left;
+}
+.hero::before { display:none; }
+.hero-content {
+    width: 100%;
+    max-width: 1480px;
+    margin: 0 auto;
+    min-height: 245px;
+    justify-items: start;
+    align-content: center;
+    padding: 34px 42px;
+    border: 1px solid rgba(42,167,255,.72);
+    border-radius: 14px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 78% 50%, rgba(0,110,255,.55), transparent 26%),
+        radial-gradient(circle at 92% 30%, rgba(39,167,255,.32), transparent 20%),
+        linear-gradient(105deg, #04183c 0%, #062457 55%, #07122c 100%);
+    box-shadow: inset 0 0 60px rgba(0,104,255,.12), 0 12px 34px rgba(0,0,0,.25);
+}
+.hero-content::after {
+    content: "♛  ♦  ♠  ♣   ✦   🎰   🪙";
+    position: absolute;
+    right: 4%;
+    top: 42%;
+    transform: translateY(-50%);
+    font-size: clamp(2.4rem, 6vw, 5.5rem);
+    letter-spacing: .12em;
+    opacity: .82;
+    filter: drop-shadow(0 0 18px rgba(0,153,255,.55));
+    pointer-events: none;
+}
+.hero-content h1 {
+    font-size: clamp(2.8rem, 5vw, 4.7rem);
+    max-width: 760px;
+    margin-bottom: .5rem;
+    color: white;
+    -webkit-text-fill-color: initial;
+    background: none;
+    position: relative;
+    z-index: 1;
+}
+.hero-content h1::first-line { color: white; }
+.hero-content p {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin-bottom: 1.5rem;
+    color: #b9d7ff;
+    font-size: 1.15rem;
+}
+.hero-buttons { position: relative; z-index: 1; justify-content: flex-start; }
+.btn-primary, .btn-primary-large {
+    background: linear-gradient(135deg,#0785ff,#1268ed);
+    color: #fff;
+    border: 1px solid #3bb2ff;
+    border-radius: 10px;
+    box-shadow: 0 8px 22px rgba(0,119,255,.25);
+}
+.btn-primary:hover, .btn-primary-large:hover {
+    background: linear-gradient(135deg,#1594ff,#2576f2);
+}
+.btn-secondary {
+    color: #e9f4ff;
+    border: 1px solid #3aa9ff;
+    border-radius: 10px;
+    background: rgba(2,16,38,.45);
+}
+.btn-secondary:hover { background: rgba(8,113,225,.2); color:white; }
+
+.hero-visual { display:none; }
+
+.games-section {
+    padding: 18px 0 26px;
+    background: transparent !important;
+    border: 0;
+}
+.games-section .container {
+    padding-top: 0;
+}
+.games-section h2 {
+    text-align: left;
+    font-size: 2rem;
+    margin: 0 0 12px;
+    color: #f4f8ff !important;
+}
+.games-grid {
+    grid-template-columns: repeat(4, minmax(0,1fr));
+    gap: 12px;
+}
+.game-card {
+    padding: 0 0 13px;
+    text-align: left;
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(155deg,#071b3a,#041128) !important;
+    border: 1px solid rgba(10,123,255,.8);
+    box-shadow: 0 8px 22px rgba(0,0,0,.24);
+}
+.game-card:hover {
+    transform: translateY(-4px);
+    border-color: #36a9ff;
+    box-shadow: 0 12px 28px rgba(0,106,255,.2);
+}
+.game-icon {
+    width: 100%;
+    height: 120px;
+    margin: 0 0 11px;
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(circle at center, rgba(20,126,255,.3), transparent 60%),
+        linear-gradient(135deg,#03183a,#09274b);
+    font-size: 4.2rem;
+}
+.game-card h3, .game-card p, .game-card .btn-play, .game-card .jackpot-label {
+    margin-left: 13px;
+    margin-right: 13px;
+}
+.game-card h3 {
+    color: #f4f8ff !important;
+    font-size: 1.2rem;
+    margin-bottom: 4px;
+}
+.game-card p {
+    color: #bdd2ee !important;
+    min-height: 66px;
+    margin-bottom: 11px;
+    font-size: .9rem;
+}
+.btn-play {
+    width: calc(100% - 26px);
+    background: linear-gradient(135deg,#0785ff,#1168ed);
+    color: white;
+    border: 1px solid #2aa7ff;
+    border-radius: 8px;
+    padding: .72rem 1rem;
+}
+.btn-play:hover { background: #168cff; transform:none; }
+
+.jackpot-card {
+    grid-column: auto;
+    padding: 0 0 13px;
+    background: linear-gradient(155deg,#071b3a,#041128) !important;
+    border: 1px solid rgba(10,123,255,.8);
+    color: #fff !important;
+}
+.jackpot-card h3 { color:#fff !important; }
+.jackpot-card p { color:#bdd2ee !important; }
+.jackpot-label { color:#63b9ff !important; padding-top:0; }
+
+.features-section, .promo-section, .updates-section, .faq-section, .contact-section { display:none !important; }
+
+.chat-section {
+    position: static;
+    display:block;
+    padding: 14px 0 24px;
+    background: transparent !important;
+    border: 0;
+}
+.chat-section .container { max-width: 1480px; }
+.chat-heading { color:#fff; }
+.chat-heading h2 { color:#fff !important; margin-bottom:2px; }
+.chat-heading p { color:#9db9dc !important; }
+.chat-panel {
+    border:1px solid rgba(11,112,223,.75);
+    border-radius:12px;
+    background:#04132b !important;
+}
+.chat-messages { background:#031027 !important; }
+.chat-form input, .chat-form select, .chat-search, .chat-filter {
+    background:#071b37 !important;
+    color:#eaf4ff !important;
+    border-color:#20558b !important;
+}
+.chat-form .btn-primary { width:auto; }
+
+body > footer, .footer {
+    background:#020b1c !important;
+    border-top:1px solid rgba(42,167,255,.25);
+}
+
+@media (min-width: 1100px) {
+    .games-section .container {
+        display:grid;
+        grid-template-columns:minmax(0,1fr) 300px;
+        gap:20px;
+    }
+    .games-section h2 { grid-column:1; }
+    .games-grid { grid-column:1; }
+    .games-section .container::after {
+        content:"Your Wallet\\A\\A 🪙  1,000\\A Tokens\\A\\A  Deposit\\A\\A  Withdraw\\A\\A Quick Links\\A\\A 🎮  Games\\A  About Us\\A  Privacy Policy\\A  Terms of Service\\A  FAQ\\A  Contact\\A  Support";
+        white-space:pre-wrap;
+        grid-column:2;
+        grid-row:1 / span 2;
+        align-self:start;
+        min-height:410px;
+        padding:24px;
+        border:1px solid rgba(11,112,223,.8);
+        border-radius:12px;
+        background:linear-gradient(155deg,#071b3a,#041128);
+        color:#dcecff;
+        font-size:1rem;
+        line-height:2;
+        box-shadow:0 8px 22px rgba(0,0,0,.24);
+    }
+}
+
+@media (max-width: 900px) {
+    .games-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .hero-content::after { opacity:.25; }
+}
+@media (max-width: 600px) {
+    .games-grid { grid-template-columns:1fr; }
+    .hero-content { padding:26px 22px; }
+    .hero-content h1 { font-size:2.4rem; }
+    .auth-buttons { gap:.3rem; }
+}
