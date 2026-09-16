@@ -11,25 +11,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-<<<<<<< HEAD
-// Add click handlers to buttons
-document.querySelectorAll('.btn-play').forEach(button => {
-    button.addEventListener('click', function() {
-        alert('Welcome to the game! This is a demo version.');
-    });
-});
-
-document.querySelector('.btn-primary')?.addEventListener('click', function() {
-    alert('Redirecting to sign up...');
-});
-
-document.querySelector('.btn-signup')?.addEventListener('click', function() {
-    alert('Redirecting to sign up...');
-});
-
-document.querySelector('.btn-login')?.addEventListener('click', function() {
-    alert('Redirecting to login...');
-=======
 const gameState = {
     game: null,
     credits: 1000,
@@ -1542,7 +1523,6 @@ document.addEventListener('click', event => {
 
 window.addEventListener('storage', event => {
     if (event.key === chatVisibilityStorageKey) applyChatVisibility();
->>>>>>> 2f53e0e (Add gambling game application)
 });
 
 // Contact form submission
