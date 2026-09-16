@@ -109,13 +109,16 @@
             </div>
             <aside class="dashboard-sidebar" aria-label="Account and quick links">
                 <div class="sidebar-card wallet-card">
-                    <div class="sidebar-title"><span>💼</span> Your Wallet</div>
-                    <div class="wallet-balance"><span>🪙</span><strong id="sidebar-token-count">1,000</strong></div>
-                    <div class="wallet-label">Tokens</div>
-                    <div class="wallet-actions">
-                        <button type="button" class="wallet-deposit">↥ Deposit</button>
-                        <button type="button" class="wallet-withdraw">↧ Withdraw</button>
+                    <div class="sidebar-title"><span>🏦</span> Your Bank</div>
+                    <div class="bank-balance"><span>🪙</span><strong id="bank-balance">0</strong></div>
+                    <div class="bank-label">Bank tokens</div>
+                    <div class="bank-rate"><span>Daily interest</span><strong id="bank-rate">2.00%</strong></div>
+                    <div class="bank-next"><span id="bank-next-label">Next interest</span><strong id="bank-next-interest">--</strong></div>
+                    <div class="bank-actions">
+                        <button type="button" class="wallet-deposit" data-bank-action="deposit">↥ Deposit</button>
+                        <button type="button" class="wallet-withdraw" data-bank-action="withdraw">↧ Withdraw</button>
                     </div>
+                    <div class="bank-hint">Interest is credited once every 24 hours. The daily rate changes every 5 minutes.</div>
                 </div>
                 <div class="sidebar-card">
                     <div class="sidebar-title"><span>🔗</span> Quick Links</div>
