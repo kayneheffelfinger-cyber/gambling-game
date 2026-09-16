@@ -3315,3 +3315,19 @@ body:not(.dark-mode) .btn-admin { color:#17345b !important; background:#fff !imp
   .nav-links { order:3; width:100%; margin-left:0; justify-content:center; }
   .auth-buttons { margin-left:auto; }
 }
+
+/* ===== Bank UI ===== */
+.bank-balance{display:flex;align-items:center;gap:10px;font-size:1.9rem;color:#fff}
+.bank-balance strong{color:#fff}
+.bank-label{color:#a9c1e5;font-size:.8rem;margin-left:38px;margin-top:-5px}
+.bank-rate,.bank-next{display:flex;justify-content:space-between;gap:10px;margin-top:12px;padding:9px 10px;border-radius:8px;background:rgba(10,71,133,.25);border:1px solid rgba(42,167,255,.22);color:#bcd4f3;font-size:.78rem}
+.bank-rate strong{color:#63b9ff;font-size:.95rem}
+.bank-next strong{color:#fff}
+.bank-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.bank-actions button{border-radius:8px;padding:.65rem;cursor:pointer;font-weight:700}
+.bank-hint{margin-top:10px;color:#819dbf;font-size:.7rem;line-height:1.45}
+body:not(.dark-mode) .bank-balance,body:not(.dark-mode) .bank-balance strong{color:#17345b}
+body:not(.dark-mode) .bank-label,body:not(.dark-mode) .bank-hint{color:#617995}
+body:not(.dark-mode) .bank-rate,body:not(.dark-mode) .bank-next{background:#f3f8fd;border-color:#d2e2ef;color:#58718d}
+body:not(.dark-mode) .bank-rate strong{color:#0874d1}
+body:not(.dark-mode) .bank-next strong{color:#17345b}
