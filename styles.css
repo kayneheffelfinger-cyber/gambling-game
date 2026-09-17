@@ -3019,7 +3019,7 @@ body:not(.dark-mode) {
 .jackpot-card p { color:#bdd2ee !important; }
 .jackpot-label { color:#63b9ff !important; padding-top:0; }
 
-.features-section, .promo-section, .updates-section, .faq-section, .contact-section { display:none !important; }
+.home-page .features-section, .home-page .promo-section, .home-page .updates-section, .home-page .faq-section, .home-page .contact-section { display:none !important; }
 
 .chat-section {
     position: static;
