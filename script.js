@@ -705,21 +705,22 @@ function openAccountModal(mode = 'create', required = false, message = '') {
 function renderAccountModal(modal, mode, required, message = '') {
     const isCreate = mode === 'create';
     const isManage = mode === 'manage';
+    const isReset = mode === 'reset';
     const currentAccount = getCurrentAccount();
     const currentBalance = getSavedAccounts().find(account => account.email === currentAccount?.email)?.tokens ?? gameState.credits;
     modal.innerHTML = `
         <div class="account-dialog" role="dialog" aria-modal="true" aria-labelledby="account-title">
             ${required ? '' : '<button class="account-close" type="button" data-action="close-account" aria-label="Close account dialog">&times;</button>'}
             <span class="game-kicker">Lucky Jackpot account</span>
-            <h2 id="account-title">${isCreate ? 'Create your account' : isManage ? 'Manage your credits' : 'Welcome back'}</h2>
-            <p class="account-intro">${isCreate ? 'Create an account to play. Your password is stored securely on the server.' : isManage ? 'You are signed in. Credit changes are only available through authorized game actions.' : 'Sign in securely with your email and password.'}</p>
+            <h2 id="account-title">${isCreate ? 'Create your account' : isManage ? 'Manage your credits' : isReset ? 'Reset your password' : 'Welcome back'}</h2>
+            <p class="account-intro">${isCreate ? 'Create an account to play. Your password is stored securely on the server.' : isManage ? 'You are signed in. Credit changes are only available through authorized game actions.' : isReset ? 'Request a one-time reset code, then choose a new password.' : 'Sign in securely with your email and password.'}</p>
             <form class="account-form" data-account-mode="${mode}">
-                ${isManage ? `<label for="account-tokens">Credit balance</label><input id="account-tokens" name="tokens" type="number" min="0" step="1" value="${escapeHtml(currentBalance)}" required>` : `${isCreate ? '<label for="account-name">Display name</label><input id="account-name" name="name" type="text" autocomplete="name" minlength="2" required>' : ''}<label for="account-email">Email address</label><input id="account-email" name="email" type="email" autocomplete="email" required><label for="account-password">Password</label><input id="account-password" name="password" type="password" autocomplete="${isCreate ? 'new-password' : 'current-password'}" minlength="10" required>`}
+                ${isManage ? `<label for="account-tokens">Credit balance</label><input id="account-tokens" name="tokens" type="number" min="0" step="1" value="${escapeHtml(currentBalance)}" required>` : `${isCreate ? '<label for="account-name">Display name</label><input id="account-name" name="name" type="text" autocomplete="name" minlength="2" required>' : ''}<label for="account-email">Email address</label><input id="account-email" name="email" type="email" autocomplete="email" required>${isReset ? '<label for="reset-token">Reset code</label><input id="reset-token" name="resetToken" type="text" autocomplete="one-time-code" placeholder="Paste the reset code" required>' : ''}<label for="account-password">${isReset ? 'New password' : 'Password'}</label><input id="account-password" name="password" type="password" autocomplete="${isCreate ? 'new-password' : 'new-password'}" minlength="10" required>`}
                 ${isCreate ? '<label class="account-consent"><input name="terms" type="checkbox" required> I agree to the <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a> and acknowledge the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</label>' : ''}
-                <p class="account-message" aria-live="polite">${message || (isCreate ? 'Use at least 10 characters. Never reuse a password from another service.' : '')}</p>
+                <p class="account-message" aria-live="polite">${message || (isCreate ? 'Use at least 10 characters. Never reuse a password from another service.' : isReset ? 'Enter your email, reset code, and a new password.' : '')}</p>
                 <button class="game-action" type="submit">${isCreate ? 'Create account' : isManage ? 'Sign out' : 'Log in'}</button>
             </form>
-            ${isManage ? '' : `<button class="account-switch" type="button" data-action="switch-account">${isCreate ? 'Already have an account? Log in' : 'Need an account? Create one'}</button>`}
+            ${isManage ? '' : isReset ? '<button class="account-switch" type="button" data-action="switch-login">Back to log in</button>' : `<button class="account-switch" type="button" data-action="switch-account">${isCreate ? 'Already have an account? Log in' : 'Need an account? Create one'}</button>${!isCreate ? '<button class="account-switch" type="button" data-action="switch-reset">Forgot password?</button>' : ''}`}
         </div>`;
     modal.dataset.required = required ? 'true' : 'false';
 }
@@ -727,6 +728,8 @@ function renderAccountModal(modal, mode, required, message = '') {
 function handleAccountClick(event) {
     const action = event.target.closest('[data-action]')?.dataset.action;
     if (action === 'close-account' && event.currentTarget.dataset.required !== 'true') closeAccountModal();
+    if (action === 'switch-reset') { openAccountModal('reset', false); return; }
+    if (action === 'switch-login') { openAccountModal('login', false); return; }
     if (action === 'switch-account') {
         const form = event.currentTarget.querySelector('.account-form');
         const required = event.currentTarget.dataset.required === 'true';
@@ -742,6 +745,30 @@ async function handleAccountSubmit(event) {
     const email = String(data.get('email')).trim().toLowerCase();
     const password = String(data.get('password'));
     let account;
+
+    if (form.dataset.accountMode === 'reset') {
+        const resetToken = String(data.get('resetToken') || '').trim();
+        try {
+            const endpoint = resetToken ? '/api/auth/reset' : '/api/auth/reset-request';
+            const payload = resetToken ? { email, token: resetToken, password } : { email };
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || 'Could not reset password');
+            if (!resetToken) {
+                const demoCode = result.demoResetToken ? ` Demo reset code: ${result.demoResetToken}` : '';
+                renderAccountModal(modal, 'reset', false, `${result.message || 'Check your email for a reset code.'}${demoCode}`);
+                return;
+            }
+            renderAccountModal(modal, 'login', false, 'Password reset successfully. Log in with your new password.');
+        } catch (error) {
+            renderAccountModal(modal, 'reset', false, error.message);
+        }
+        return;
+    }
 
     if (form.dataset.accountMode === 'manage') {
         await logoutAccount();
