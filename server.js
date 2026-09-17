@@ -103,6 +103,7 @@ function writeAccounts(accounts) {
 function publicAccount(account) {
     return {
         name: account.name,
+        avatar: account.avatar || '✨',
         email: account.email,
         tokens: Number.isFinite(Number(account.tokens)) ? Number(account.tokens) : 1000,
         createdAt: account.createdAt,
@@ -358,7 +359,15 @@ async function handleAccountRequest(request, response) {
             if (!Number.isFinite(tokens)) return sendJson(response, 400, { error: 'Invalid token amount' });
             account.tokens = Math.max(0, Math.round(tokens));
         }
-        if (changes.role === undefined && changes.mutedUntil === undefined && changes.tokens === undefined) return sendJson(response, 400, { error: 'No valid changes supplied' });
+        if (changes.name !== undefined) {
+            if (typeof changes.name !== 'string' || changes.name.trim().length < 2 || changes.name.trim().length > 32) return sendJson(response, 400, { error: 'Invalid display name' });
+            account.name = changes.name.trim();
+        }
+        if (changes.avatar !== undefined) {
+            if (typeof changes.avatar !== 'string' || [...changes.avatar].length > 4) return sendJson(response, 400, { error: 'Invalid avatar' });
+            account.avatar = changes.avatar;
+        }
+        if (changes.role === undefined && changes.mutedUntil === undefined && changes.tokens === undefined && changes.name === undefined && changes.avatar === undefined) return sendJson(response, 400, { error: 'No valid changes supplied' });
         writeAccounts(accounts);
         return sendJson(response, 200, publicAccount(account));
     } catch {
@@ -467,3 +476,4 @@ server.on('error', error => {
 });
 
 server.listen(port, '0.0.0.0', () => console.log(`Lucky Jackpot running at http://localhost:${port}`));
+
