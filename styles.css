@@ -3354,3 +3354,5 @@ body:not(.dark-mode) .bank-next strong{color:#17345b}
     .user-token-balance { margin-left: 0; text-align: left; width: 100%; }
     .user-history-row { grid-template-columns: 1fr 1fr; }
 }
+
+.account-switch + .account-switch { margin-left: 0.5rem; }
