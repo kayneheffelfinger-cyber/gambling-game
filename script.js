@@ -27,6 +27,8 @@ const gameState = {
     kenoNumbers: [],
     kenoDraw: [],
     baccaratResult: null,
+    wheelResult: null,
+    highlowResult: null,
     currentBet: 10
 };
 
@@ -1201,7 +1203,9 @@ function renderGame(message = 'Demo credits only. No real money is used.') {
         coinflip: 'Coin Flip',
         keno: 'Keno',
         baccarat: 'Baccarat',
-        jackpot: 'Lucky Jackpot'
+        jackpot: 'Lucky Jackpot',
+        wheel: 'Prize Wheel',
+        highlow: 'High or Low'
     };
 
     modal.innerHTML = `
@@ -1319,6 +1323,22 @@ function gameMarkup() {
             <button class="game-action" type="button" data-action="enter-jackpot" ${jackpotEntries >= jackpotEntryLimit ? 'disabled' : ''}>${jackpotEntries >= jackpotEntryLimit ? 'Entry limit reached' : 'Enter draw'}</button>`;
     }
 
+    if (gameState.game === 'wheel') {
+        return `
+            <div class="roulette-number" data-wheel-result>${gameState.wheelResult ?? '?'}</div>
+            <p class="game-help">The wheel can land on 0x, 1.5x, 2x, 3x, 5x, or 10x your bet.</p>
+            <button class="game-action" type="button" data-action="spin-wheel">Spin the wheel</button>`;
+    }
+
+    if (gameState.game === 'highlow') {
+        return `
+            <div class="roulette-number" data-highlow-result>${gameState.highlowResult ?? '?'}</div>
+            <label class="game-label" for="highlow-choice">Your call</label>
+            <select class="game-select" id="highlow-choice"><option value="higher">Higher</option><option value="lower">Lower</option></select>
+            <p class="game-help">A correct guess pays 2x your bet. Ties return your stake.</p>
+            <button class="game-action" type="button" data-action="draw-highlow">Draw card</button>`;
+    }
+
     return `
         <div class="poker-hand">${gameState.pokerHand.length ? gameState.pokerHand.map(card => `<span class="playing-card ${card.suit === '♥' || card.suit === '♦' ? 'red-card' : ''}">${card.rank}<b>${card.suit}</b></span>`).join('') : '<span class="card-placeholder">Deal five cards</span>'}</div>
         <p class="game-help">A pair or better wins 50 credits.</p>
@@ -1350,6 +1370,8 @@ function handleGameClick(event) {
     if (action === 'draw-keno') drawKeno();
     if (action === 'deal-baccarat') dealBaccarat();
     if (action === 'enter-jackpot') enterJackpot();
+    if (action === 'spin-wheel') spinWheel();
+    if (action === 'draw-highlow') drawHighLow();
 }
 
 function canPlay() {
@@ -1746,6 +1768,35 @@ function dealBaccarat() {
     renderGame(`${winner[0].toUpperCase()}${winner.slice(1)} wins. ${winnings ? `You won ${formatWinPayout(winnings)}.` : 'Your bet missed.'}`);
 }
 
+function spinWheel() {
+    if (!canPlay()) return;
+    const segments = [0, 1.5, 2, 2, 3, 5, 10];
+    const multiplier = segments[Math.floor(Math.random() * segments.length)];
+    const winnings = multiplier ? getBetPayout(multiplier) : 0;
+    gameState.wheelResult = `${multiplier}x`;
+    gameState.credits += winnings;
+    completeGamePlay(winnings ? `Won (${multiplier}x wheel)` : 'Lost (0x wheel)', winnings);
+    updateCreditCounter();
+    publishBigWin('Prize Wheel', winnings);
+    renderGame(multiplier ? `The wheel landed on ${multiplier}x. You won ${formatWinPayout(winnings)}.` : 'The wheel landed on 0x. Better luck next spin.');
+}
+
+function drawHighLow() {
+    if (!canPlay()) return;
+    const first = Math.floor(Math.random() * 13) + 1;
+    const second = Math.floor(Math.random() * 13) + 1;
+    const choice = document.querySelector('#highlow-choice')?.value;
+    const tie = first === second;
+    const won = !tie && (choice === 'higher' ? second > first : second < first);
+    const winnings = tie ? gameState.currentBet : won ? getBetPayout(2) : 0;
+    gameState.highlowResult = `${first} → ${second}`;
+    gameState.credits += winnings;
+    completeGamePlay(tie ? `Tie (${first})` : won ? `Won (${first} to ${second})` : `Lost (${first} to ${second})`, winnings);
+    updateCreditCounter();
+    publishBigWin('High or Low', winnings);
+    renderGame(tie ? `Both cards were ${first}. Your stake was returned.` : won ? `Correct call! ${first} to ${second}. You won ${formatWinPayout(winnings)}.` : `${first} to ${second} — your call missed.`);
+}
+
 function enterJackpot() {
     const jackpotEntries = getJackpotEntryCount();
     if (jackpotEntries >= jackpotEntryLimit) {
@@ -1931,3 +1982,4 @@ if (bonusButton) {
 }
 
 console.log('Lucky Jackpot website loaded successfully!');
+
