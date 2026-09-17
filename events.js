@@ -5,6 +5,8 @@
     const EVENT_ANCHOR_MS = Date.UTC(2026, 8, 14, 0, 0, 0);
     const GAME_HISTORY_KEY = 'lucky-jackpot-game-history';
     const ACCOUNT_KEY = 'lucky-jackpot-accounts';
+    const TOKEN_SYNC_KEY = 'lucky-jackpot-token-sync-v1';
+    const TOKEN_SYNC_INTERVAL_MS = 500;
 
     const EVENTS = [
         {
@@ -99,6 +101,130 @@
         } catch (error) {
             return [];
         }
+    }
+
+    function getCurrentLocalBalance() {
+        try {
+            const currentAccount = JSON.parse(localStorage.getItem('lucky-jackpot-current-account') || 'null');
+            const accounts = JSON.parse(localStorage.getItem(ACCOUNT_KEY) || '[]');
+            const account = Array.isArray(accounts)
+                ? accounts.find(savedAccount => savedAccount.email === currentAccount?.email)
+                : null;
+            const tokens = Number(account?.tokens);
+            if (!currentAccount?.email || !Number.isFinite(tokens)) return null;
+            return { email: currentAccount.email, tokens: Math.max(0, Math.round(tokens)) };
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function getPendingTokenSync() {
+        try {
+            const pending = JSON.parse(localStorage.getItem(TOKEN_SYNC_KEY) || 'null');
+            if (!pending?.email || !Number.isFinite(Number(pending.tokens))) return null;
+            return {
+                email: pending.email,
+                tokens: Math.max(0, Math.round(Number(pending.tokens))),
+                updatedAt: Number(pending.updatedAt) || 0
+            };
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function setPendingTokenSync(email, tokens) {
+        if (!email || !Number.isFinite(Number(tokens))) return;
+        try {
+            localStorage.setItem(TOKEN_SYNC_KEY, JSON.stringify({
+                email,
+                tokens: Math.max(0, Math.round(Number(tokens))),
+                updatedAt: Date.now()
+            }));
+        } catch (error) {}
+    }
+
+    function clearPendingTokenSync(email) {
+        const pending = getPendingTokenSync();
+        if (!pending || !email || pending.email !== email) return;
+        try { localStorage.removeItem(TOKEN_SYNC_KEY); } catch (error) {}
+    }
+
+    function updateLocalAccountTokens(email, tokens) {
+        try {
+            const accounts = JSON.parse(localStorage.getItem(ACCOUNT_KEY) || '[]');
+            if (!Array.isArray(accounts)) return;
+            const account = accounts.find(savedAccount => savedAccount.email === email);
+            if (!account) return;
+            account.tokens = Math.max(0, Math.round(Number(tokens) || 0));
+            localStorage.setItem(ACCOUNT_KEY, JSON.stringify(accounts));
+        } catch (error) {}
+    }
+
+    let tokenSyncInFlight = false;
+
+    async function syncPendingTokenBalance() {
+        if (tokenSyncInFlight) return;
+        const pending = getPendingTokenSync();
+        if (!pending) return;
+
+        const currentAccount = typeof getCurrentAccount === 'function' ? getCurrentAccount() : null;
+        if (!currentAccount?.email || currentAccount.email !== pending.email) return;
+
+        tokenSyncInFlight = true;
+        try {
+            const accountResponse = await fetch('/api/auth/me', { cache: 'no-store' });
+            if (!accountResponse.ok) return;
+            const serverAccount = await accountResponse.json();
+            const serverTokens = Number(serverAccount.tokens);
+            if (!Number.isFinite(serverTokens)) return;
+
+            if (Math.round(serverTokens) === pending.tokens) {
+                clearPendingTokenSync(pending.email);
+                return;
+            }
+
+            const response = await fetch('/api/accounts', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: pending.email, tokens: pending.tokens }),
+                cache: 'no-store'
+            });
+            if (!response.ok) return;
+
+            const updatedAccount = await response.json().catch(() => null);
+            const updatedTokens = Number(updatedAccount?.tokens);
+            updateLocalAccountTokens(pending.email, Number.isFinite(updatedTokens) ? updatedTokens : pending.tokens);
+            if (typeof gameState !== 'undefined' && Number.isFinite(updatedTokens)) {
+                gameState.credits = Math.max(0, Math.round(updatedTokens));
+                if (typeof updateTokenCounter === 'function') updateTokenCounter();
+            }
+            clearPendingTokenSync(pending.email);
+        } catch (error) {
+            // Keep the pending balance so the next interval can retry the server sync.
+        } finally {
+            tokenSyncInFlight = false;
+        }
+    }
+
+    function patchTokenPersistence() {
+        if (typeof updateCreditCounter !== 'function' || updateCreditCounter.__eventsTokenPatched) return;
+        const originalUpdateCreditCounter = updateCreditCounter;
+        const patchedUpdateCreditCounter = function (...args) {
+            const currentAccount = typeof getCurrentAccount === 'function' ? getCurrentAccount() : null;
+            if (currentAccount?.email && typeof gameState !== 'undefined') {
+                setPendingTokenSync(currentAccount.email, gameState.credits);
+            }
+            const result = originalUpdateCreditCounter.apply(this, args);
+            syncPendingTokenBalance();
+            return result;
+        };
+        patchedUpdateCreditCounter.__eventsTokenPatched = true;
+        updateCreditCounter = patchedUpdateCreditCounter;
+    }
+
+    function captureInitialTokenBalance() {
+        const localBalance = getCurrentLocalBalance();
+        if (localBalance) setPendingTokenSync(localBalance.email, localBalance.tokens);
     }
 
     function isCompletedPlay(play) {
@@ -400,12 +526,16 @@
     }
 
     function initialize() {
+        captureInitialTokenBalance();
         injectStyles();
+        patchTokenPersistence();
         patchGamePayouts();
         patchAdminRoadmap();
         removeProgressionRoadmapCard();
         renderEventShell();
         renderSeasonalLeaderboards();
+        syncPendingTokenBalance();
+        window.setInterval(syncPendingTokenBalance, TOKEN_SYNC_INTERVAL_MS);
         window.setInterval(refreshCountdown, 1000);
         window.setInterval(updateSeasonalLeaderboards, 5000);
     }
