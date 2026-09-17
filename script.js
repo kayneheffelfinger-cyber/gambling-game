@@ -121,7 +121,7 @@ function initializeApp() {
     try { loadCurrentTokenBalance(); updateTokenCounter(); } catch (error) { console.error('Token initialization failed:', error); }
     try { startBankRefresh(); } catch (error) { console.error('Bank initialization failed:', error); }
     try { applyGameAvailability(); } catch (error) { console.error('Game availability failed:', error); }
-    try { startChatRefresh(); startPresenceRefresh(); restoreSession(); initializeUserPage(); } catch (error) { console.error('Refresh initialization failed:', error); }
+    try { startChatRefresh(); startPresenceRefresh(); restoreSession(); initializeUserPage(); initializeLeaderboardLink(); } catch (error) { console.error('Refresh initialization failed:', error); }
 }
 
 if (document.readyState === 'loading') {
@@ -1418,6 +1418,16 @@ function updateCreditCounter() {
 function updateTokenCounter() {
     const tokenElement = document.querySelector('#token-count');
     if (tokenElement) tokenElement.textContent = gameState.credits.toLocaleString();
+}
+
+function initializeLeaderboardLink() {
+    document.querySelectorAll('.nav-links').forEach(nav => {
+        if (nav.querySelector('a[href="leaderboard.html"]')) return;
+        const link = document.createElement('a');
+        link.href = 'leaderboard.html';
+        link.textContent = 'Leaderboard';
+        nav.appendChild(link);
+    });
 }
 
 function getGameHistory() {
