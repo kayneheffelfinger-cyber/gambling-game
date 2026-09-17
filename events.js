@@ -57,6 +57,11 @@
         return EVENT_ANCHOR_MS + cycleIndex * EVENT_WEEK_MS;
     }
 
+    function getMsUntilRotation() {
+        const elapsed = Math.max(0, Date.now() - EVENT_ANCHOR_MS);
+        return EVENT_WEEK_MS - (elapsed % EVENT_WEEK_MS);
+    }
+
     function formatCountdown(ms) {
         const totalSeconds = Math.max(0, Math.floor(ms / 1000));
         const days = Math.floor(totalSeconds / 86400);
@@ -97,7 +102,7 @@
     }
 
     function isCompletedPlay(play) {
-        return play && play.result && play.result !== 'Played';
+        return Boolean(play && play.result && play.result !== 'Played');
     }
 
     function getEventStats() {
@@ -107,8 +112,8 @@
         const accounts = getSavedAccounts();
         const accountMap = new Map(accounts.map(account => [account.email, account]));
         const emails = new Set([...Object.keys(history), ...accountMap.keys()]);
-        const rows = [];
         const pointsMultiplier = getCurrentEvent().id === 'winners-week' ? 2 : 1;
+        const rows = [];
 
         emails.forEach(email => {
             const plays = Array.isArray(history[email]) ? history[email] : [];
@@ -150,6 +155,16 @@
         return 0;
     }
 
+    function showEventToast(message, event = getCurrentEvent()) {
+        const existing = document.querySelector('.event-toast');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'event-toast';
+        toast.innerHTML = `<strong>${escapeHtml(event.name)}</strong>${escapeHtml(message)}`;
+        document.body.appendChild(toast);
+        window.setTimeout(() => toast.remove(), 3200);
+    }
+
     function patchGamePayouts() {
         if (typeof completeGamePlay !== 'function' || completeGamePlay.__eventsPatched) return;
         const originalCompleteGamePlay = completeGamePlay;
@@ -159,7 +174,6 @@
             const bet = typeof gameState !== 'undefined' ? Number(gameState.currentBet) || 0 : 0;
             const bonus = eventBonusFor(game, Number(winnings), bet);
             if (!bonus || typeof gameState === 'undefined') return;
-
             gameState.credits += bonus;
             if (typeof updateCreditCounter === 'function') updateCreditCounter();
             showEventToast(`Event bonus +${bonus.toLocaleString()} tokens`, getCurrentEvent());
@@ -180,10 +194,23 @@
             if (normalizedTitle === 'seasonal events') {
                 const phase = card.querySelector('.admin-update-version');
                 const details = card.querySelector('p');
-                if (phase) phase.textContent = 'Live now';
-                if (details) details.textContent = 'Rotating jackpot events, limited-time modifiers, and leaderboards are live.';
+                if (phase && phase.textContent !== 'Live now') phase.textContent = 'Live now';
+                const liveDetails = 'Rotating jackpot events, limited-time modifiers, and leaderboards are live.';
+                if (details && details.textContent !== liveDetails) details.textContent = liveDetails;
             }
         });
+    }
+
+    function patchAdminRoadmap() {
+        if (typeof renderAdminDashboard !== 'function' || renderAdminDashboard.__eventsPatched) return;
+        const originalRenderAdminDashboard = renderAdminDashboard;
+        const patchedRenderAdminDashboard = async function (...args) {
+            const result = await originalRenderAdminDashboard(...args);
+            if (args[1] === 'roadmap') removeProgressionRoadmapCard();
+            return result;
+        };
+        patchedRenderAdminDashboard.__eventsPatched = true;
+        renderAdminDashboard = patchedRenderAdminDashboard;
     }
 
     function injectStyles() {
@@ -229,22 +256,22 @@
 
     function renderEventShell() {
         const event = getCurrentEvent();
-        const existing = document.querySelector('#seasonal-event-shell');
-        let shell = existing;
+        let shell = document.querySelector('#seasonal-event-shell');
         if (!shell) {
             shell = document.createElement('section');
             shell.id = 'seasonal-event-shell';
             shell.className = 'seasonal-event-shell';
             const gameSection = document.querySelector('#games');
             const leaderboardList = document.querySelector('#leaderboard-list');
+            const profile = document.querySelector('.user-profile');
             if (gameSection) gameSection.parentNode.insertBefore(shell, gameSection);
             else if (leaderboardList) leaderboardList.parentNode.insertBefore(shell, leaderboardList);
+            else if (profile) profile.prepend(shell);
             else document.body.insertBefore(shell, document.body.firstChild);
         }
 
-        const secondsUntilRotation = EVENT_WEEK_MS - ((Date.now() - EVENT_ANCHOR_MS) % EVENT_WEEK_MS);
         shell.innerHTML = `
-            <div class="seasonal-event-card ${event.colorClass}">
+            <div class="seasonal-event-card ${escapeHtml(event.colorClass)}">
                 <div class="seasonal-event-top">
                     <div>
                         <div class="seasonal-event-kicker">${escapeHtml(event.kicker)}</div>
@@ -255,7 +282,7 @@
                 </div>
                 <div class="seasonal-event-meta">
                     <span class="seasonal-event-chip">Modifier<strong>${escapeHtml(event.modifierLabel)}</strong></span>
-                    <span class="seasonal-event-chip">Ends in<strong data-event-countdown>${formatCountdown(secondsUntilRotation)}</strong></span>
+                    <span class="seasonal-event-chip">Ends in<strong data-event-countdown>${formatCountdown(getMsUntilRotation())}</strong></span>
                 </div>
                 <div class="seasonal-event-actions">
                     <a href="leaderboard.html">View leaderboards</a>
@@ -264,86 +291,67 @@
             </div>`;
 
         shell.querySelector('[data-event-action="details"]')?.addEventListener('click', () => {
-            const message = 'Event points are based on wagered tokens, winnings, wins, and jackpot entries recorded during the current event window. The leaderboard is calculated from saved play history in this browser.';
-            window.alert(message);
+            window.alert('Event points are based on wagered tokens, winnings, wins, and jackpot entries recorded during the current event window. The leaderboard is calculated from saved play history in this browser.');
         });
-    }
-
-    function refreshCountdown() {
-        const countdown = document.querySelector('[data-event-countdown]');
-        if (countdown) {
-            const secondsUntilRotation = EVENT_WEEK_MS - ((Date.now() - EVENT_ANCHOR_MS) % EVENT_WEEK_MS);
-            countdown.textContent = formatCountdown(secondsUntilRotation);
-        }
     }
 
     function renderSeasonalLeaderboards() {
         const list = document.querySelector('#leaderboard-list');
-        if (!list || document.querySelector('#event-leaderboard-shell')) return;
-        const shell = document.createElement('section');
-        shell.id = 'event-leaderboard-shell';
-        shell.className = 'event-leaderboard-shell';
+        if (!list) return;
+        let shell = document.querySelector('#event-leaderboard-shell');
+        if (!shell) {
+            shell = document.createElement('section');
+            shell.id = 'event-leaderboard-shell';
+            shell.className = 'event-leaderboard-shell';
+            list.parentNode.appendChild(shell);
+        }
+
         const event = getCurrentEvent();
-        shell.innerHTML = `
-            <div class="updates-heading">
-                <div><span class="section-kicker">Seasonal event</span><h2>Leaderboards</h2></div>
-                <p>Live event stats for <strong>${escapeHtml(event.name)}</strong>. The token ranking above remains the shared account balance leaderboard.</p>
-            </div>
-            <div class="event-leaderboard-grid">
-                <article class="event-leaderboard-card" data-event-board="eventPoints">
-                    <h3>Event points</h3><p>Overall event activity</p><div class="event-leaderboard-rows"></div>
-                </article>
-                <article class="event-leaderboard-card" data-event-board="biggestWin">
-                    <h3>Biggest win</h3><p>Largest single event payout</p><div class="event-leaderboard-rows"></div>
-                </article>
-                <article class="event-leaderboard-card" data-event-board="wagered">
-                    <h3>Most wagered</h3><p>Total event wagers</p><div class="event-leaderboard-rows"></div>
-                </article>
-            </div>
-            <p class="event-leaderboard-note">Event leaderboards use completed play history saved in this browser and reset when the weekly event rotates.</p>`;
-        list.parentNode.insertBefore(shell, list);
-        updateSeasonalLeaderboards();
-    }
+        const rows = getEventStats();
+        const top = (field) => rows.slice().sort((a, b) => Number(b[field]) - Number(a[field])).slice(0, 10);
 
-    function updateSeasonalLeaderboards() {
-        const stats = getEventStats();
-        const configurations = [
-            { key: 'eventPoints', metric: 'eventPoints', formatter: value => `${Math.round(value).toLocaleString()} pts` },
-            { key: 'biggestWin', metric: 'biggestWin', formatter: value => `${Math.round(value).toLocaleString()} tokens` },
-            { key: 'wagered', metric: 'wagered', formatter: value => `${Math.round(value).toLocaleString()} tokens` }
-        ];
-
-        configurations.forEach(config => {
-            const board = document.querySelector(`[data-event-board="${config.key}"] .event-leaderboard-rows`);
-            if (!board) return;
-            const rows = stats.slice().sort((a, b) => b[config.metric] - a[config.metric]).slice(0, 5);
-            board.innerHTML = rows.length ? rows.map((row, index) => `
+        const renderRows = (items, valueField, formatter) => items.length
+            ? items.map((row, index) => `
                 <div class="event-leaderboard-row">
                     <span class="event-leaderboard-rank">${index + 1}</span>
                     <span class="event-leaderboard-name">${escapeHtml(row.name)}</span>
-                    <span class="event-leaderboard-score">${config.formatter(row[config.metric])}</span>
-                </div>`).join('') : '<p class="event-leaderboard-note">No completed event plays yet.</p>';
-        });
+                    <strong class="event-leaderboard-score">${formatter(row[valueField])}</strong>
+                </div>`).join('')
+            : '<p class="event-leaderboard-note">Play during this event to appear here.</p>';
+
+        const points = top('eventPoints');
+        const wins = top('biggestWin');
+        const wagered = top('wagered');
+
+        shell.innerHTML = `
+            <div class="updates-heading">
+                <div><span class="section-kicker">Seasonal event</span><h2>Event leaderboards</h2></div>
+                <p>Current event: <strong>${escapeHtml(event.name)}</strong></p>
+            </div>
+            <div class="event-leaderboard-grid">
+                <div class="event-leaderboard-card"><h3>Event points</h3><p>Overall event score.</p>${renderRows(points, 'eventPoints', value => `${Number(value).toLocaleString()} pts`)}</div>
+                <div class="event-leaderboard-card"><h3>Biggest win</h3><p>Largest single recorded win.</p>${renderRows(wins, 'biggestWin', value => `${Number(value).toLocaleString()} tokens`)}</div>
+                <div class="event-leaderboard-card"><h3>Total wagered</h3><p>Wager volume during the event.</p>${renderRows(wagered, 'wagered', value => `${Number(value).toLocaleString()} tokens`)}</div>
+            </div>
+            <p class="event-leaderboard-note">Event leaderboard data is calculated from saved play history in this browser.</p>`;
     }
 
-    function showEventToast(message, event) {
-        if (!document.body) return;
-        const toast = document.createElement('div');
-        toast.className = 'event-toast';
-        toast.innerHTML = `<strong>${escapeHtml(event.name)}</strong>${escapeHtml(message)}`;
-        document.body.appendChild(toast);
-        window.setTimeout(() => toast.remove(), 3200);
+    function refreshCountdown() {
+        const countdown = document.querySelector('[data-event-countdown]');
+        if (countdown) countdown.textContent = formatCountdown(getMsUntilRotation());
+    }
+
+    function updateSeasonalLeaderboards() {
+        if (document.querySelector('#event-leaderboard-shell')) renderSeasonalLeaderboards();
     }
 
     function initialize() {
         injectStyles();
         patchGamePayouts();
+        patchAdminRoadmap();
         removeProgressionRoadmapCard();
-        const roadmapObserver = new MutationObserver(removeProgressionRoadmapCard);
-        roadmapObserver.observe(document.body, { childList: true, subtree: true });
         renderEventShell();
         renderSeasonalLeaderboards();
-        updateSeasonalLeaderboards();
         window.setInterval(refreshCountdown, 1000);
         window.setInterval(updateSeasonalLeaderboards, 5000);
     }
@@ -357,7 +365,6 @@
     window.LuckyJackpotEvents = {
         getCurrentEvent,
         getEventStats,
-        getEventStartMs,
-        eventBonusFor
+        refresh: updateSeasonalLeaderboards
     };
-}());
+})();
