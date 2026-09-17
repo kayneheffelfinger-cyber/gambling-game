@@ -51,12 +51,12 @@
     <script>
         const profileName = document.querySelector('#user-name');
         const profileAvatar = document.querySelector('#user-avatar');
-        const observer = new MutationObserver(() => {
+        const profileObserver = new MutationObserver(() => {
             if (profileName && profileAvatar && profileName.textContent && !profileName.textContent.startsWith('Sign in')) {
                 if (!profileAvatar.dataset.customAvatar) profileAvatar.textContent = profileName.textContent.charAt(0).toUpperCase();
             }
         });
-        observer.observe(profileName, { childList: true });
+        profileObserver.observe(profileName, { childList: true });
 
         const AVATARS = ['✨','💎','🎲','🎰','🃏','🔥','👑','🌈','⚡','🏆'];
         const form = document.querySelector('#profile-editor-form');
