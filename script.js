@@ -279,6 +279,7 @@ async function restoreSession() {
         gameState.credits = getAccountTokens(account);
         updateAccountButtons(account);
         updateTokenCounter();
+        initializeUserPage();
     } catch (error) {}
 }
 
