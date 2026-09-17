@@ -246,10 +246,14 @@
             .event-leaderboard-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
             .event-leaderboard-score{font-weight:800;text-align:right}
             .event-leaderboard-note{margin:10px 0 0;font-size:.78rem;opacity:.62}
-            .event-toast{position:fixed;right:18px;bottom:18px;z-index:9999;max-width:320px;padding:14px 16px;border-radius:14px;background:#16112d;color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.25);animation:eventToastIn .25s ease}
-            .event-toast strong{display:block;margin-bottom:2px}
-            @keyframes eventToastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-            @media (max-width:820px){.event-leaderboard-grid{grid-template-columns:1fr}.seasonal-event-top{flex-direction:column}.seasonal-event-badge{align-self:flex-start}}
+            .event-scoring-intro{margin:0 0 18px;color:var(--text-soft,#cbd5e1)}
+            .event-scoring-list{display:grid;gap:10px;margin:0 0 20px}
+            .event-scoring-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 14px;border:1px solid rgba(148,163,184,.18);border-radius:12px;background:rgba(255,255,255,.04)}
+            .event-scoring-row strong{white-space:normal;text-align:right}
+            .event-scoring-example{margin:0 0 18px;padding:15px 16px;border-radius:14px;background:rgba(250,204,21,.09);border:1px solid rgba(250,204,21,.2)}
+            .event-scoring-example strong{color:#facc15}
+            .event-scoring-footer{margin:0;color:var(--muted,#94a3b8);font-size:.86rem}
+            @media (max-width:820px){.event-leaderboard-grid{grid-template-columns:1fr}.seasonal-event-top{flex-direction:column}.seasonal-event-badge{align-self:flex-start}.event-scoring-row{align-items:flex-start}}
         `;
         document.head.appendChild(style);
     }
@@ -290,9 +294,64 @@
                 </div>
             </div>`;
 
-        shell.querySelector('[data-event-action="details"]')?.addEventListener('click', () => {
-            window.alert('Event points are based on wagered tokens, winnings, wins, and jackpot entries recorded during the current event window. The leaderboard is calculated from saved play history in this browser.');
+        shell.querySelector('[data-event-action="details"]')?.addEventListener('click', openEventScoringScreen);
+    }
+
+    function closeEventScoringScreen(modal) {
+        modal?.remove();
+        if (!document.querySelector('.game-modal.is-open') && !document.querySelector('.account-modal.is-open') && !document.querySelector('.update-modal.is-open') && !document.querySelector('.admin-modal.is-open')) {
+            document.body.classList.remove('modal-open');
+        }
+    }
+
+    function openEventScoringScreen() {
+        const existing = document.querySelector('#event-scoring-modal');
+        if (existing) {
+            existing.classList.add('is-open');
+            return;
+        }
+
+        const event = getCurrentEvent();
+        const doublePoints = event.id === 'winners-week';
+        const modal = document.createElement('div');
+        modal.id = 'event-scoring-modal';
+        modal.className = 'game-modal is-open';
+        modal.innerHTML = `
+            <div class="game-dialog" role="dialog" aria-modal="true" aria-labelledby="event-scoring-title">
+                <button class="game-close" type="button" data-event-action="close-scoring" aria-label="Close event scoring">&times;</button>
+                <div class="game-dialog-header">
+                    <div>
+                        <span class="game-kicker">Seasonal event</span>
+                        <h2 id="event-scoring-title">How event scoring works</h2>
+                    </div>
+                    <div class="credit-counter">${escapeHtml(event.name)}</div>
+                </div>
+                <p class="event-scoring-intro">Event points are calculated from your completed plays during the current event window.</p>
+                <div class="event-scoring-list">
+                    <div class="event-scoring-row"><span>Tokens wagered</span><strong>+1 point per token</strong></div>
+                    <div class="event-scoring-row"><span>Tokens won</span><strong>+1 point per token</strong></div>
+                    <div class="event-scoring-row"><span>Winning play</span><strong>+50 points</strong></div>
+                    <div class="event-scoring-row"><span>Jackpot play</span><strong>+100 points</strong></div>
+                    <div class="event-scoring-row"><span>Current event modifier</span><strong>${escapeHtml(event.modifierLabel)}</strong></div>
+                    ${doublePoints ? "<div class='event-scoring-row'><span>Winner's Week</span><strong>2x final event points</strong></div>" : ''}
+                </div>
+                <div class="event-scoring-example"><strong>Example:</strong> wager 25 tokens, win 50 tokens, and finish with a winning play = <strong>125 event points</strong>${doublePoints ? " before the 2x Winner's Week multiplier." : '.'}</div>
+                <p class="event-scoring-footer">Leaderboard standings use completed play history saved in this browser and reset with the weekly event rotation.</p>
+                <button class="game-action" type="button" data-event-action="close-scoring">Back to event</button>
+            </div>`;
+
+        modal.addEventListener('click', eventClick => {
+            if (eventClick.target === modal || eventClick.target.closest('[data-event-action="close-scoring"]')) {
+                closeEventScoringScreen(modal);
+            }
         });
+        document.body.appendChild(modal);
+        document.body.classList.add('modal-open');
+    }
+
+    function refreshCountdown() {
+        const countdown = document.querySelector('[data-event-countdown]');
+        if (countdown) countdown.textContent = formatCountdown(getMsUntilRotation());
     }
 
     function renderSeasonalLeaderboards() {
@@ -336,11 +395,6 @@
             <p class="event-leaderboard-note">Event leaderboard data is calculated from saved play history in this browser.</p>`;
     }
 
-    function refreshCountdown() {
-        const countdown = document.querySelector('[data-event-countdown]');
-        if (countdown) countdown.textContent = formatCountdown(getMsUntilRotation());
-    }
-
     function updateSeasonalLeaderboards() {
         if (document.querySelector('#event-leaderboard-shell')) renderSeasonalLeaderboards();
     }
@@ -367,4 +421,4 @@
         getEventStats,
         refresh: updateSeasonalLeaderboards
     };
-})();
+}());
