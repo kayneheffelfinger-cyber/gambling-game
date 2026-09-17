@@ -37,6 +37,7 @@
                     <div><h1 id="user-name">Your profile</h1><p id="user-email">Sign in to see your account.</p></div>
                     <div class="user-token-balance"><span>Wallet balance</span><strong id="user-token-balance">—</strong></div>
                 </div>
+                <section class="profile-editor" aria-labelledby="profile-editor-title"><div><span class="section-kicker">Profile settings</span><h2 id="profile-editor-title">Edit your profile</h2><p>Choose how your name and avatar appear around the game.</p></div><form id="profile-editor-form"><label for="profile-display-name">Display name<input id="profile-display-name" name="name" type="text" minlength="2" maxlength="32" required></label><fieldset><legend>Profile picture</legend><div class="avatar-picker" id="avatar-picker"></div></fieldset><button class="btn-primary" type="submit">Save profile</button><span id="profile-save-status" class="profile-save-status" role="status"></span></form></section>
                 <div class="updates-heading"><div><span class="section-kicker">Activity</span><h2>Past games</h2></div><p>Your latest 100 play-money rounds.</p></div>
                 <div id="user-game-history" class="user-history" aria-live="polite"></div>
                 <p id="user-history-empty" class="user-history-empty" hidden>No games recorded yet. Head back to the games page and play a round.</p>
@@ -52,10 +53,29 @@
         const profileAvatar = document.querySelector('#user-avatar');
         const observer = new MutationObserver(() => {
             if (profileName && profileAvatar && profileName.textContent && !profileName.textContent.startsWith('Sign in')) {
-                profileAvatar.textContent = profileName.textContent.charAt(0).toUpperCase();
+                if (!profileAvatar.dataset.customAvatar) profileAvatar.textContent = profileName.textContent.charAt(0).toUpperCase();
             }
         });
         observer.observe(profileName, { childList: true });
+
+        const AVATARS = ['✨','💎','🎲','🎰','🃏','🔥','👑','🌈','⚡','🏆'];
+        const form = document.querySelector('#profile-editor-form');
+        const nameInput = document.querySelector('#profile-display-name');
+        const picker = document.querySelector('#avatar-picker');
+        const status = document.querySelector('#profile-save-status');
+        let selectedAvatar = '✨';
+        function loadProfileEditor() {
+            const account = JSON.parse(localStorage.getItem('lucky-jackpot-current-account') || 'null');
+            if (!account) { form.hidden = true; return; }
+            nameInput.value = account.name || '';
+            selectedAvatar = account.avatar || selectedAvatar;
+            picker.innerHTML = AVATARS.map(avatar => `<button type="button" class="avatar-option ${avatar === selectedAvatar ? 'is-selected' : ''}" data-avatar="${avatar}" aria-label="Choose ${avatar}">${avatar}</button>`).join('');
+            profileAvatar.textContent = selectedAvatar; profileAvatar.dataset.customAvatar = 'true';
+        }
+        picker?.addEventListener('click', event => { const option = event.target.closest('[data-avatar]'); if (!option) return; selectedAvatar = option.dataset.avatar; picker.querySelectorAll('.avatar-option').forEach(item => item.classList.toggle('is-selected', item === option)); profileAvatar.textContent = selectedAvatar; profileAvatar.dataset.customAvatar = 'true'; });
+        form?.addEventListener('submit', async event => { event.preventDefault(); const account = JSON.parse(localStorage.getItem('lucky-jackpot-current-account') || 'null'); if (!account) return; const name = nameInput.value.trim(); if (name.length < 2) return; const saved = JSON.parse(localStorage.getItem('lucky-jackpot-accounts') || '[]'); const found = saved.find(item => item.email === account.email); if (found) { found.name = name; found.avatar = selectedAvatar; localStorage.setItem('lucky-jackpot-accounts', JSON.stringify(saved)); } account.name = name; account.avatar = selectedAvatar; localStorage.setItem('lucky-jackpot-current-account', JSON.stringify(account)); try { await fetch('/api/accounts', { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ email:account.email, name, avatar:selectedAvatar }) }); } catch {} document.querySelector('#user-name').textContent = name; profileAvatar.textContent = selectedAvatar; status.textContent = 'Profile saved.'; setTimeout(() => { status.textContent = ''; }, 2500); });
+        loadProfileEditor();
     </script>
 </body>
 </html>
+
