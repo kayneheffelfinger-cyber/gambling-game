@@ -120,7 +120,7 @@ function initializeApp() {
     try { loadCurrentTokenBalance(); updateTokenCounter(); } catch (error) { console.error('Token initialization failed:', error); }
     try { startBankRefresh(); } catch (error) { console.error('Bank initialization failed:', error); }
     try { applyGameAvailability(); } catch (error) { console.error('Game availability failed:', error); }
-    try { startChatRefresh(); startPresenceRefresh(); } catch (error) { console.error('Refresh initialization failed:', error); }
+    try { startChatRefresh(); startPresenceRefresh(); restoreSession(); } catch (error) { console.error('Refresh initialization failed:', error); }
 }
 
 if (document.readyState === 'loading') {
@@ -254,10 +254,31 @@ function dismissUpdateNotice(modal) {
 
 function getSavedAccounts() {
     try {
-        return JSON.parse(localStorage.getItem(accountStorageKey) || '[]');
+        const accounts = JSON.parse(localStorage.getItem(accountStorageKey) || '[]');
+        return Array.isArray(accounts) ? accounts.map(({ password, passwordHash, ...account }) => account) : [];
     } catch (error) {
         return [];
     }
+}
+
+function savePublicAccount(account) {
+    if (!account?.email) return;
+    const accounts = getSavedAccounts().filter(saved => saved.email !== account.email);
+    accounts.push(account);
+    localStorage.setItem(accountStorageKey, JSON.stringify(accounts));
+}
+
+async function restoreSession() {
+    try {
+        const response = await fetch('/api/auth/me', { cache: 'no-store' });
+        if (!response.ok) return;
+        const account = await response.json();
+        savePublicAccount(account);
+        localStorage.setItem(currentAccountStorageKey, JSON.stringify({ name: account.name, email: account.email, role: account.role }));
+        gameState.credits = getAccountTokens(account);
+        updateAccountButtons(account);
+        updateTokenCounter();
+    } catch (error) {}
 }
 
 async function getSharedAccounts() {
@@ -306,7 +327,7 @@ async function updatePresence() {
         await fetch('/api/presence', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: currentAccount.email })
+            body: JSON.stringify({})
         });
     } catch (error) {
         // Presence is best effort when the shared server is unavailable.
@@ -637,24 +658,26 @@ function renderChatNotice(message) {
 }
 
 async function saveAccount(account) {
-    try {
-        const response = await fetch('/api/accounts', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(account)
-        });
-        if (!response.ok) throw new Error(response.status === 409 ? 'Account already exists' : 'Accounts API unavailable');
-    } catch (error) {
-        const accounts = getSavedAccounts();
-        accounts.push(account);
-        localStorage.setItem(accountStorageKey, JSON.stringify(accounts));
+    const response = await fetch('/api/accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(account)
+    });
+    if (!response.ok) {
+        const result = await response.json().catch(() => ({}));
+        throw new Error(result.error || 'Could not create account');
     }
-    const accounts = getSavedAccounts();
-    if (!accounts.some(savedAccount => savedAccount.email === account.email)) {
-        accounts.push(account);
-        localStorage.setItem(accountStorageKey, JSON.stringify(accounts));
-    }
-    localStorage.setItem(currentAccountStorageKey, JSON.stringify({ name: account.name, email: account.email }));
+    const savedAccount = await response.json();
+    savePublicAccount(savedAccount);
+    localStorage.setItem(currentAccountStorageKey, JSON.stringify({ name: savedAccount.name, email: savedAccount.email, role: savedAccount.role }));
+    return savedAccount;
+}
+
+async function logoutAccount() {
+    try { await fetch('/api/auth/logout', { method: 'POST' }); } catch (error) {}
+    localStorage.removeItem(currentAccountStorageKey);
+    gameState.credits = 1000;
+    updateAccountButtons(null);
 }
 
 function showAccountPrompt() {
@@ -687,12 +710,12 @@ function renderAccountModal(modal, mode, required, message = '') {
             ${required ? '' : '<button class="account-close" type="button" data-action="close-account" aria-label="Close account dialog">&times;</button>'}
             <span class="game-kicker">Lucky Jackpot account</span>
             <h2 id="account-title">${isCreate ? 'Create your account' : isManage ? 'Manage your credits' : 'Welcome back'}</h2>
-            <p class="account-intro">${isCreate ? 'Create a free demo account to play and save your progress on this device.' : isManage ? 'Set the demo credit balance for your signed-in account.' : 'Log in with an account saved on this device.'}</p>
+            <p class="account-intro">${isCreate ? 'Create an account to play. Your password is stored securely on the server.' : isManage ? 'You are signed in. Credit changes are only available through authorized game actions.' : 'Sign in securely with your email and password.'}</p>
             <form class="account-form" data-account-mode="${mode}">
-                ${isManage ? `<label for="account-tokens">Credit balance</label><input id="account-tokens" name="tokens" type="number" min="0" step="1" value="${escapeHtml(currentBalance)}" required>` : `${isCreate ? '<label for="account-name">Display name</label><input id="account-name" name="name" type="text" autocomplete="name" minlength="2" required>' : ''}<label for="account-email">Email address</label><input id="account-email" name="email" type="email" autocomplete="email" required><label for="account-password">Password</label><input id="account-password" name="password" type="password" autocomplete="${isCreate ? 'new-password' : 'current-password'}" minlength="6" required>`}
+                ${isManage ? `<label for="account-tokens">Credit balance</label><input id="account-tokens" name="tokens" type="number" min="0" step="1" value="${escapeHtml(currentBalance)}" required>` : `${isCreate ? '<label for="account-name">Display name</label><input id="account-name" name="name" type="text" autocomplete="name" minlength="2" required>' : ''}<label for="account-email">Email address</label><input id="account-email" name="email" type="email" autocomplete="email" required><label for="account-password">Password</label><input id="account-password" name="password" type="password" autocomplete="${isCreate ? 'new-password' : 'current-password'}" minlength="10" required>`}
                 ${isCreate ? '<label class="account-consent"><input name="terms" type="checkbox" required> I agree to the <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a> and acknowledge the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</label>' : ''}
-                <p class="account-message" aria-live="polite">${message || (isCreate ? 'Demo accounts are stored only in this browser.' : '')}</p>
-                <button class="game-action" type="submit">${isCreate ? 'Create account' : isManage ? 'Save credits' : 'Log in'}</button>
+                <p class="account-message" aria-live="polite">${message || (isCreate ? 'Use at least 10 characters. Never reuse a password from another service.' : '')}</p>
+                <button class="game-action" type="submit">${isCreate ? 'Create account' : isManage ? 'Sign out' : 'Log in'}</button>
             </form>
             ${isManage ? '' : `<button class="account-switch" type="button" data-action="switch-account">${isCreate ? 'Already have an account? Log in' : 'Need an account? Create one'}</button>`}
         </div>`;
@@ -716,42 +739,40 @@ async function handleAccountSubmit(event) {
     const data = new FormData(form);
     const email = String(data.get('email')).trim().toLowerCase();
     const password = String(data.get('password'));
-    const accounts = await getSharedAccounts();
     let account;
 
     if (form.dataset.accountMode === 'manage') {
-        const currentAccount = getCurrentAccount();
-        const nextTokens = Number(data.get('tokens'));
-        if (!currentAccount?.email || !Number.isFinite(nextTokens) || nextTokens < 0) return;
-        await updateOwnTokenBalance(currentAccount.email, Math.round(nextTokens));
-        gameState.credits = Math.round(nextTokens);
+        await logoutAccount();
         closeAccountModal();
-        updateCreditCounter();
         return;
     }
 
     if (form.dataset.accountMode === 'create') {
         const name = String(data.get('name')).trim();
-        if (accounts.some(savedAccount => savedAccount.email === email)) {
-            renderAccountModal(modal, 'create', modal.dataset.required === 'true', 'An account with that email already exists. Log in instead.');
-            return;
-        }
-        account = { name, email, password, tokens: 1000, createdAt: new Date().toISOString(), termsAcceptedAt: new Date().toISOString() };
         try {
-            await saveAccount(account);
+            account = await saveAccount({ name, email, password, termsAcceptedAt: new Date().toISOString() });
         } catch (error) {
-            renderAccountModal(modal, 'create', modal.dataset.required === 'true', 'This browser cannot save accounts. Please enable local storage and try again.');
+            renderAccountModal(modal, 'create', modal.dataset.required === 'true', error.message);
             return;
         }
-        gameState.credits = account.tokens;
-    } else {
-        account = accounts.find(savedAccount => savedAccount.email === email && savedAccount.password === password);
-        if (!account) {
-            renderAccountModal(modal, 'login', false, 'Email or password is incorrect on this device.');
-            return;
-        }
-        localStorage.setItem(currentAccountStorageKey, JSON.stringify({ name: account.name, email: account.email }));
         gameState.credits = getAccountTokens(account);
+    } else {
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || 'Email or password is incorrect.');
+            account = result;
+            savePublicAccount(account);
+            localStorage.setItem(currentAccountStorageKey, JSON.stringify({ name: account.name, email: account.email, role: account.role }));
+            gameState.credits = getAccountTokens(account);
+        } catch (error) {
+            renderAccountModal(modal, 'login', false, error.message);
+            return;
+        }
     }
 
     closeAccountModal();
