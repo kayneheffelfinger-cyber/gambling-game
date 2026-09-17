@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User profile - Lucky Jackpot</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <div class="logo">💎 Lucky Jackpot</div>
+            <nav class="nav-links">
+                <a href="index.html">Games</a>
+                <a href="features.html">Features</a>
+                <a href="updates.html">Updates</a>
+                <a href="chat.html">Chat</a>
+                <a href="user.html" aria-current="page">User</a>
+                <a href="faq.html">FAQ</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="auth-buttons">
+                <div class="token-wallet">Tokens <strong id="token-count">1,000</strong></div>
+                <button class="btn-login">Login</button>
+                <button class="btn-signup">Sign Up</button>
+                <button class="btn-admin" type="button">Admin</button>
+                <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="true">Light mode</button>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section class="user-section">
+            <div class="container user-profile">
+                <span class="section-kicker">Player profile</span>
+                <div class="user-profile-card">
+                    <div class="user-avatar" id="user-avatar" aria-hidden="true">?</div>
+                    <div><h1 id="user-name">Your profile</h1><p id="user-email">Sign in to see your account.</p></div>
+                    <div class="user-token-balance"><span>Wallet balance</span><strong id="user-token-balance">—</strong></div>
+                </div>
+                <div class="updates-heading"><div><span class="section-kicker">Activity</span><h2>Past games</h2></div><p>Your latest 100 play-money rounds.</p></div>
+                <div id="user-game-history" class="user-history" aria-live="polite"></div>
+                <p id="user-history-empty" class="user-history-empty" hidden>No games recorded yet. Head back to the games page and play a round.</p>
+                <a class="btn-primary" href="index.html#games">Play a game</a>
+            </div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+    <script>
+        const profileName = document.querySelector('#user-name');
+        const profileAvatar = document.querySelector('#user-avatar');
+        const observer = new MutationObserver(() => {
+            if (profileName && profileAvatar && profileName.textContent && !profileName.textContent.startsWith('Sign in')) {
+                profileAvatar.textContent = profileName.textContent.charAt(0).toUpperCase();
+            }
+        });
+        observer.observe(profileName, { childList: true });
+    </script>
+</body>
+</html>
