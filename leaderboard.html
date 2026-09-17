@@ -12,23 +12,53 @@
     <script src="script.js"></script>
     <script src="events.js"></script>
     <script>
-        async function loadLeaderboard() {
+        let leaderboardRequestInFlight = false;
+        let lastLeaderboardSignature = '';
+
+        function renderLiveLeaderboard(players) {
             const list = document.querySelector('#leaderboard-list');
+            if (!list) return;
+
+            const signature = JSON.stringify(players);
+            if (signature === lastLeaderboardSignature) return;
+            lastLeaderboardSignature = signature;
+
+            list.innerHTML = players.length ? players.map((player, index) => `
+                <article class="leaderboard-row ${index < 3 ? 'is-top' : ''}">
+                    <strong class="leaderboard-rank">${index + 1}</strong>
+                    <span class="leaderboard-name">${escapeHtml(player.name || 'Player')}</span>
+                    <strong class="leaderboard-tokens">${Number(player.tokens || 0).toLocaleString()} tokens</strong>
+                </article>`).join('') : '<p class="user-history-empty">No players yet. Create an account to claim the top spot.</p>';
+        }
+
+        async function loadLeaderboard() {
+            if (leaderboardRequestInFlight) return;
+            const list = document.querySelector('#leaderboard-list');
+            if (!list) return;
+
+            leaderboardRequestInFlight = true;
             try {
                 const response = await fetch('/api/leaderboard', { cache: 'no-store' });
                 if (!response.ok) throw new Error('Unavailable');
                 const players = await response.json();
-                list.innerHTML = players.length ? players.map((player, index) => `
-                    <article class="leaderboard-row ${index < 3 ? 'is-top' : ''}">
-                        <strong class="leaderboard-rank">${index + 1}</strong>
-                        <span class="leaderboard-name">${escapeHtml(player.name || 'Player')}</span>
-                        <strong class="leaderboard-tokens">${Number(player.tokens || 0).toLocaleString()} tokens</strong>
-                    </article>`).join('') : '<p class="user-history-empty">No players yet. Create an account to claim the top spot.</p>';
+                renderLiveLeaderboard(Array.isArray(players) ? players : []);
             } catch (error) {
-                list.innerHTML = '<p class="user-history-note">The leaderboard is temporarily unavailable.</p>';
+                if (!lastLeaderboardSignature) {
+                    list.innerHTML = '<p class="user-history-note">The leaderboard is temporarily unavailable.</p>';
+                }
+            } finally {
+                leaderboardRequestInFlight = false;
             }
         }
+
         loadLeaderboard();
+        window.setInterval(() => {
+            if (!document.hidden) loadLeaderboard();
+        }, 1000);
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) loadLeaderboard();
+        });
     </script>
 </body>
 </html>
