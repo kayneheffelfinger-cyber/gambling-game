@@ -316,17 +316,34 @@ async function handleAccountRequest(request, response) {
         }
     }
     if (request.method !== 'PATCH') return send(response, 405, 'Method Not Allowed');
-    const requester = requireRole(request, response, ['owner', 'moderator']);
-    if (!requester) return;
+
+    const requester = getSessionAccount(request);
+    if (!requester) return sendJson(response, 401, { error: 'Sign in required' });
+
     try {
         const changes = await readJson(request, 2000);
         const email = typeof changes.email === 'string' ? changes.email.trim().toLowerCase() : '';
         const accounts = readAccounts();
         const account = accounts.find(saved => saved.email === email);
         if (!account) return sendJson(response, 404, { error: 'Account not found' });
+
         const requesterRole = requester.role || (requester.isAdmin ? 'moderator' : 'player');
+        const isSelf = requester.email === email;
+        const canManageAccounts = requesterRole === 'owner' || requesterRole === 'moderator';
+
+        // Players may only update their own token balance. Role and mute changes remain admin-only.
+        if (!isSelf && !canManageAccounts) {
+            return sendJson(response, 403, { error: 'Insufficient permissions' });
+        }
+        if ((changes.role !== undefined || changes.mutedUntil !== undefined) && !canManageAccounts) {
+            return sendJson(response, 403, { error: 'Insufficient permissions' });
+        }
+        if (changes.role !== undefined && requesterRole !== 'owner') {
+            return sendJson(response, 403, { error: 'Only an owner can change roles' });
+        }
+
         if (changes.role !== undefined) {
-            if (requesterRole !== 'owner' || !['owner', 'moderator', 'player'].includes(changes.role)) {
+            if (!['owner', 'moderator', 'player'].includes(changes.role)) {
                 return sendJson(response, 403, { error: 'Only an owner can change roles' });
             }
             account.role = changes.role;
