@@ -31,6 +31,46 @@
                 </article>`).join('') : '<p class="user-history-empty">No players yet. Create an account to claim the top spot.</p>';
         }
 
+        async function reconcileCurrentPlayerBalance() {
+            let currentAccount = null;
+            try {
+                currentAccount = JSON.parse(localStorage.getItem('lucky-jackpot-current-account') || 'null');
+            } catch (error) {
+                return;
+            }
+            if (!currentAccount?.email) return;
+
+            let localAccounts = [];
+            try {
+                const saved = JSON.parse(localStorage.getItem('lucky-jackpot-accounts') || '[]');
+                localAccounts = Array.isArray(saved) ? saved : [];
+            } catch (error) {
+                return;
+            }
+
+            const localAccount = localAccounts.find(account => account.email === currentAccount.email);
+            const localTokens = Number(localAccount?.tokens);
+            if (!Number.isFinite(localTokens)) return;
+
+            try {
+                const accountResponse = await fetch('/api/auth/me', { cache: 'no-store' });
+                if (!accountResponse.ok) return;
+                const serverAccount = await accountResponse.json();
+                const serverTokens = Number(serverAccount.tokens);
+                if (!Number.isFinite(serverTokens) || localTokens <= serverTokens) return;
+
+                await fetch('/api/accounts', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentAccount.email, tokens: Math.round(localTokens) }),
+                    keepalive: true,
+                    cache: 'no-store'
+                });
+            } catch (error) {
+                // The next refresh will retry the reconciliation.
+            }
+        }
+
         async function loadLeaderboard() {
             if (leaderboardRequestInFlight) return;
             const list = document.querySelector('#leaderboard-list');
@@ -38,6 +78,7 @@
 
             leaderboardRequestInFlight = true;
             try {
+                await reconcileCurrentPlayerBalance();
                 const response = await fetch('/api/leaderboard', { cache: 'no-store' });
                 if (!response.ok) throw new Error('Unavailable');
                 const players = await response.json();
