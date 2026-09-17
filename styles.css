@@ -3331,3 +3331,26 @@ body:not(.dark-mode) .bank-label,body:not(.dark-mode) .bank-hint{color:#617995}
 body:not(.dark-mode) .bank-rate,body:not(.dark-mode) .bank-next{background:#f3f8fd;border-color:#d2e2ef;color:#58718d}
 body:not(.dark-mode) .bank-rate strong{color:#0874d1}
 body:not(.dark-mode) .bank-next strong{color:#17345b}
+
+
+/* User profile and game history */
+.user-section { padding: 5rem 0; min-height: 70vh; }
+.user-profile { max-width: 1100px; margin: 0 auto; }
+.user-profile-card { display: flex; align-items: center; gap: 1.25rem; padding: 1.5rem; margin: 1.5rem 0 2rem; border: 1px solid rgba(250, 204, 21, 0.25); border-radius: 1.25rem; background: var(--panel); box-shadow: 0 18px 50px var(--shadow); }
+.user-avatar { display: grid; place-items: center; width: 4rem; height: 4rem; flex: 0 0 4rem; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #a855f7); color: #111827; font-size: 1.6rem; font-weight: 800; }
+.user-profile-card h1 { margin: 0; }
+.user-profile-card p { color: var(--muted); margin: 0.15rem 0; }
+.user-token-balance { margin-left: auto; text-align: right; }
+.user-token-balance span, .user-history-row span { display: block; color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.user-token-balance strong { color: var(--gold); font-size: 1.4rem; }
+.user-history { display: grid; gap: 0.75rem; }
+.user-history-row { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 1rem; align-items: center; padding: 1rem 1.25rem; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 0.9rem; background: var(--panel); }
+.user-history-row > div { min-width: 0; }
+.user-history-row strong { display: block; }
+.user-history-row .is-win { color: #4ade80; }
+.user-history-note, .user-history-empty { padding: 2rem; text-align: center; color: var(--muted); border: 1px dashed rgba(148, 163, 184, 0.35); border-radius: 1rem; }
+@media (max-width: 760px) {
+    .user-profile-card { align-items: flex-start; flex-wrap: wrap; }
+    .user-token-balance { margin-left: 0; text-align: left; width: 100%; }
+    .user-history-row { grid-template-columns: 1fr 1fr; }
+}
