@@ -3356,3 +3356,12 @@ body:not(.dark-mode) .bank-next strong{color:#17345b}
 }
 
 .account-switch + .account-switch { margin-left: 0.5rem; }
+
+
+.leaderboard-list { display: grid; gap: 0.75rem; margin: 1.5rem 0 2rem; max-width: 760px; }
+.leaderboard-row { display: grid; grid-template-columns: 3.5rem 1fr auto; gap: 1rem; align-items: center; padding: 1rem 1.25rem; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 0.9rem; background: var(--panel); }
+.leaderboard-rank { color: var(--muted); font-size: 1.2rem; }
+.leaderboard-name { font-weight: 700; }
+.leaderboard-tokens { color: var(--gold); }
+.leaderboard-row.is-top { border-color: rgba(250, 204, 21, 0.5); box-shadow: 0 10px 30px var(--shadow); }
+@media (max-width: 560px) { .leaderboard-row { grid-template-columns: 2rem 1fr; } .leaderboard-tokens { grid-column: 2; } }
