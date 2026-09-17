@@ -902,6 +902,7 @@ async function renderAdminDashboard(modal, activeTab = 'overview', messagesLoade
                 <button class="admin-tab ${activeTab === 'games' ? 'is-active' : ''}" type="button" role="tab" aria-selected="${activeTab === 'games'}" data-action="admin-tab" data-tab="games">Games</button>
                 <button class="admin-tab ${activeTab === 'updates' ? 'is-active' : ''}" type="button" role="tab" aria-selected="${activeTab === 'updates'}" data-action="admin-tab" data-tab="updates">Updates</button>
                 <button class="admin-tab ${activeTab === 'support' ? 'is-active' : ''}" type="button" role="tab" aria-selected="${activeTab === 'support'}" data-action="admin-tab" data-tab="support">Support</button>
+                <button class="admin-tab ${activeTab === 'roadmap' ? 'is-active' : ''}" type="button" role="tab" aria-selected="${activeTab === 'roadmap'}" data-action="admin-tab" data-tab="roadmap">Roadmap</button>
                 <button class="admin-tab ${activeTab === 'chat' ? 'is-active' : ''}" type="button" role="tab" aria-selected="${activeTab === 'chat'}" data-action="admin-tab" data-tab="chat">Chat</button>
             </div>
             <div class="admin-tab-panel">${adminTabContent(activeTab, accounts, currentAccount, totalTokens)}</div>
@@ -946,6 +947,23 @@ function adminTabContent(activeTab, accounts, currentAccount, totalTokens) {
         return `
             <div class="admin-section-heading"><h3>Support requests</h3><span>${tickets.length} total</span></div>
             <div class="admin-ticket-list">${tickets.length ? tickets.map(ticket => `<div class="admin-ticket-card ${ticket.status === 'resolved' ? 'is-resolved' : ''}"><div class="admin-ticket-head"><div><strong>${escapeHtml(ticket.subject || 'Support request')}</strong><span>${escapeHtml(ticket.name || 'Guest')} · ${escapeHtml(ticket.email || 'No email')}</span></div><span class="admin-ticket-status ${ticket.status === 'resolved' ? 'is-resolved' : 'is-open'}">${ticket.status === 'resolved' ? 'Resolved' : 'Open'}</span></div><p>${escapeHtml(ticket.message || 'No details provided.')}</p><small>${new Date(ticket.createdAt || Date.now()).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</small>${canManageSupport ? `<button class="admin-game-toggle ${ticket.status === 'resolved' ? 'is-close' : 'is-open'}" type="button" data-action="toggle-support-status" data-ticket-id="${escapeHtml(ticket.id || '')}">${ticket.status === 'resolved' ? 'Reopen' : 'Resolve'}</button>` : ''}</div>`).join('') : '<p class="account-intro">No support tickets have been submitted yet.</p>'}</div>`;
+    }
+
+    if (activeTab === 'roadmap') {
+        const roadmapItems = [
+            { phase: 'Next update', title: 'Player progression', details: 'Add XP, levels, achievements, daily challenges, and cosmetic unlocks.' },
+            { phase: 'Following update', title: 'Seasonal events', details: 'Launch rotating jackpot events, limited-time modifiers, and leaderboards.' },
+            { phase: 'Future update', title: 'Tournament mode', details: 'Add scheduled blackjack and roulette tournaments with score-based rewards.' },
+            { phase: 'Future update', title: 'Responsible-play tools', details: 'Add session timers, token limits, cooldowns, and play summaries.' }
+        ];
+        return `
+            <div class="admin-section-heading"><h3>Upcoming updates</h3><span>Private roadmap</span></div>
+            <div class="admin-update-list">${roadmapItems.map(item => `
+                <div class="admin-update-card">
+                    <span class="admin-update-icon">&#9733;</span>
+                    <div><span class="admin-update-version">${escapeHtml(item.phase)}</span><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.details)}</p></div>
+                </div>`).join('')}</div>
+            <p class="account-intro">This roadmap is visible only inside the authenticated admin panel.</p>`;
     }
 
     if (activeTab === 'chat') {
