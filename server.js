@@ -10,6 +10,7 @@ const accountsFile = path.join(rootDirectory, 'accounts.json');
 const sessionLifetimeMs = 24 * 60 * 60 * 1000;
 const sessions = new Map();
 const loginAttempts = new Map();
+const resetTokens = new Map();
 const sensitiveFiles = new Set(['/accounts.json', '/chat-messages.json']);
 const contentTypes = {
     '.css': 'text/css; charset=utf-8',
@@ -194,6 +195,51 @@ async function handleAuthRequest(request, response, pathname) {
         const token = parseCookies(request).lj_session;
         if (token) sessions.delete(token);
         return send(response, 204, '', 'text/plain; charset=utf-8', { 'Set-Cookie': secureCookie('', 0) });
+    }
+    if (pathname === '/api/auth/reset-request') {
+        if (request.method !== 'POST') return send(response, 405, 'Method Not Allowed');
+        try {
+            const { email } = await readJson(request, 2000);
+            const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+            const account = readAccounts().find(saved => saved.email === normalizedEmail);
+            const responseBody = { message: 'If that account exists, a reset code has been generated.' };
+            if (account) {
+                const token = crypto.randomBytes(24).toString('hex');
+                resetTokens.set(token, { email: normalizedEmail, expiresAt: Date.now() + 15 * 60 * 1000 });
+                if (process.env.NODE_ENV !== 'production') responseBody.demoResetToken = token;
+            }
+            return sendJson(response, 200, responseBody);
+        } catch {
+            return sendJson(response, 400, { error: 'Invalid reset request' });
+        }
+    }
+    if (pathname === '/api/auth/reset') {
+        if (request.method !== 'POST') return send(response, 405, 'Method Not Allowed');
+        try {
+            const { email, token, password } = await readJson(request, 3000);
+            const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+            if (typeof token !== 'string' || !token || typeof password !== 'string' || password.length < 10) {
+                return sendJson(response, 400, { error: 'Provide a reset code and a password of at least 10 characters.' });
+            }
+            const reset = resetTokens.get(token);
+            if (!reset || reset.expiresAt < Date.now() || reset.email !== normalizedEmail) {
+                if (reset?.expiresAt < Date.now()) resetTokens.delete(token);
+                return sendJson(response, 400, { error: 'Invalid or expired reset code.' });
+            }
+            const accounts = readAccounts();
+            const account = accounts.find(saved => saved.email === normalizedEmail);
+            if (!account) return sendJson(response, 400, { error: 'Invalid or expired reset code.' });
+            account.passwordHash = await hashPassword(password);
+            delete account.password;
+            writeAccounts(accounts);
+            resetTokens.delete(token);
+            for (const [sessionToken, session] of sessions) {
+                if (session.email === normalizedEmail) sessions.delete(sessionToken);
+            }
+            return sendJson(response, 200, { message: 'Password reset. You can now sign in.' });
+        } catch {
+            return sendJson(response, 400, { error: 'Invalid password reset request' });
+        }
     }
     if (pathname !== '/api/auth/login' || request.method !== 'POST') return send(response, 405, 'Method Not Allowed');
     if (isRateLimited(request)) return sendJson(response, 429, { error: 'Too many attempts. Try again later.' });
