@@ -1386,6 +1386,7 @@ function spinSlots() {
             const uniqueSymbols = new Set(finalSlots).size;
             const winnings = uniqueSymbols === 1 ? getBetPayout(10) : uniqueSymbols === 2 ? getBetPayout(2) : 0;
             gameState.credits += winnings;
+            completeGamePlay(winnings ? 'Won' : 'Lost', winnings);
             publishBigWin('Lucky Slots', winnings);
             spinButton.disabled = false;
             spinButton.textContent = 'Spin';
@@ -1436,8 +1437,10 @@ function recordGamePlay(game, bet, result = 'Played', winnings = 0) {
     try {
         const history = JSON.parse(localStorage.getItem(gameHistoryStorageKey) || '{}');
         const playerHistory = Array.isArray(history[email]) ? history[email] : [];
+        const playId = `play-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        gameState.lastPlayId = playId;
         playerHistory.unshift({
-            id: `play-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            id: playId,
             game,
             bet,
             result,
@@ -1446,6 +1449,23 @@ function recordGamePlay(game, bet, result = 'Played', winnings = 0) {
         });
         history[email] = playerHistory.slice(0, 100);
         localStorage.setItem(gameHistoryStorageKey, JSON.stringify(history));
+    } catch (error) {}
+}
+
+function completeGamePlay(result, winnings = 0) {
+    const email = getCurrentAccount()?.email;
+    const playId = gameState.lastPlayId;
+    if (!email || !playId) return;
+    try {
+        const history = JSON.parse(localStorage.getItem(gameHistoryStorageKey) || '{}');
+        const playerHistory = Array.isArray(history[email]) ? history[email] : [];
+        const play = playerHistory.find(item => item.id === playId);
+        if (play) {
+            play.result = result;
+            play.winnings = Number.isFinite(Number(winnings)) ? winnings : 0;
+            history[email] = playerHistory;
+            localStorage.setItem(gameHistoryStorageKey, JSON.stringify(history));
+        }
     } catch (error) {}
 }
 
@@ -1506,6 +1526,7 @@ function spinRoulette() {
     const winnings = exactNumberHit ? getBetPayout(35) : colorHit ? getBetPayout(2) : 0;
     gameState.rouletteResult = result;
     gameState.credits += winnings;
+    completeGamePlay(exactNumberHit ? `Exact hit (${result})` : colorHit ? `Won on ${color}` : `Lost (${result} ${color})`, winnings);
     publishBigWin('Roulette', winnings);
     updateCreditCounter();
     const resultMessage = exactNumberHit ? `Exact hit! You won ${formatWinPayout(winnings)}.` : colorHit ? `The wheel landed on ${result} ${color}. You won ${formatWinPayout(winnings)}.` : `The wheel landed on ${result} ${color}. No win this round.`;
@@ -1544,6 +1565,7 @@ function rollDice() {
             const won = bet === 'high' ? total >= 8 : bet === 'low' ? total <= 6 : bet === 'even' ? total % 2 === 0 : total % 2 !== 0;
             const winnings = won ? getBetPayout(2) : 0;
             gameState.credits += winnings;
+            completeGamePlay(won ? `Won (${total})` : `Lost (${total})`, winnings);
             updateCreditCounter();
             rollButton.disabled = false;
             rollButton.textContent = 'Roll';
@@ -1564,6 +1586,7 @@ function dealPoker() {
     const hasPair = Object.values(counts).some(count => count > 1);
     const winnings = hasPair ? getBetPayout(5) : 0;
     gameState.credits += winnings;
+    completeGamePlay(hasPair ? 'Won (pair or better)' : 'Lost (no pair)', winnings);
     publishBigWin('Five Card Poker', winnings);
     updateCreditCounter();
     renderGame(`${hasPair ? `Pair or better! You won ${formatWinPayout(winnings)}.` : 'No pair this hand.'}`);
@@ -1603,6 +1626,7 @@ function hitBlackjack() {
     const playerValue = getBlackjackValue(gameState.blackjackHand);
     if (playerValue > 21) {
         gameState.blackjackInProgress = false;
+        completeGamePlay(`Lost (bust at ${playerValue})`, 0);
         renderGame(`You bust with ${playerValue}. The dealer wins.`);
         return;
     }
@@ -1622,6 +1646,7 @@ function standBlackjack() {
     const winnings = playerWins ? getBetPayout(4) : tie ? gameState.currentBet : 0;
     gameState.blackjackInProgress = false;
     gameState.credits += winnings;
+    completeGamePlay(playerWins ? `Won (${playerValue} vs ${dealerValue})` : tie ? `Tie (${playerValue})` : `Lost (${playerValue} vs ${dealerValue})`, winnings);
     updateCreditCounter();
     renderGame(playerWins ? `You have ${playerValue}. You won ${formatWinPayout(winnings)}!` : tie ? `Both hands are ${playerValue}. Your ${gameState.currentBet}-token stake is returned.` : `The dealer wins with ${dealerValue}. Your hand was ${playerValue}.`);
 }
@@ -1634,6 +1659,7 @@ function flipCoin() {
     gameState.coinResult = result;
     const winnings = won ? getBetPayout(2) : 0;
     gameState.credits += winnings;
+    completeGamePlay(won ? `Won (${result})` : `Lost (${result})`, winnings);
     updateCreditCounter();
     renderGame(`${result}! ${won ? `You won ${formatWinPayout(winnings)}.` : 'Your call missed.'}`);
 }
@@ -1657,6 +1683,7 @@ function drawKeno() {
     const winnings = hits === 6 ? getBetPayout(12) : hits === 5 ? getBetPayout(6) : hits === 4 ? getBetPayout(2.5) : 0;
     gameState.kenoDraw = draw;
     gameState.credits += winnings;
+    completeGamePlay(hits ? `Won (${hits} matches)` : 'Lost (no matches)', winnings);
     updateCreditCounter();
     publishBigWin('Keno', winnings);
     renderGame(`${draw.join(', ')} drawn. ${hits ? `${hits} matches! You won ${formatWinPayout(winnings)}.` : 'No matches this time.'}`);
@@ -1673,6 +1700,7 @@ function dealBaccarat() {
     const winnings = bet === winner ? (winner === 'tie' ? getBetPayout(9) : getBetPayout(2)) : 0;
     gameState.baccaratResult = { player: playerTotal, banker: bankerTotal };
     gameState.credits += winnings;
+    completeGamePlay(winnings ? `Won (${winner})` : `Lost (${winner})`, winnings);
     updateCreditCounter();
     publishBigWin('Baccarat', winnings);
     renderGame(`${winner[0].toUpperCase()}${winner.slice(1)} wins. ${winnings ? `You won ${formatWinPayout(winnings)}.` : 'Your bet missed.'}`);
@@ -1691,6 +1719,7 @@ function enterJackpot() {
     if (won) {
         const winnings = gameState.jackpotPool;
         gameState.credits += winnings;
+        completeGamePlay('Won (jackpot)', winnings);
         publishBigWin('Lucky Jackpot', winnings);
         gameState.jackpotPool = 1000;
         localStorage.setItem(jackpotPoolStorageKey, String(gameState.jackpotPool));
@@ -1699,6 +1728,7 @@ function enterJackpot() {
         return;
     }
     localStorage.setItem(jackpotPoolStorageKey, String(gameState.jackpotPool));
+    completeGamePlay('Lost (jackpot entry)', 0);
     updateCreditCounter();
     renderGame(`Not this time. The jackpot is now ${gameState.jackpotPool.toLocaleString()} credits.`);
 }
