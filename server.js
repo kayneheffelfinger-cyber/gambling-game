@@ -8,6 +8,7 @@ const rootDirectory = __dirname;
 const chatFile = path.join(rootDirectory, 'chat-messages.json');
 const accountsFile = path.join(rootDirectory, 'accounts.json');
 const sessionLifetimeMs = 24 * 60 * 60 * 1000;
+const chatRetentionMs = 12 * 60 * 60 * 1000;
 const sessions = new Map();
 const loginAttempts = new Map();
 const resetTokens = new Map();
@@ -54,11 +55,16 @@ function readJson(request, maxLength = 10000) {
 function readMessages() {
     try {
         const messages = JSON.parse(fs.readFileSync(chatFile, 'utf8'));
-        return Array.isArray(messages) ? messages.map((message, index) => {
+        if (!Array.isArray(messages)) return [];
+        const cutoff = Date.now() - chatRetentionMs;
+        return messages.map((message, index) => {
             if (message && typeof message.id === 'string' && message.id) return message;
             const signature = `${message?.timestamp || ''}-${message?.author || ''}-${message?.body || ''}-${index}`;
             return { ...message, id: `legacy-${Buffer.from(signature).toString('hex').slice(0, 32)}` };
-        }) : [];
+        }).filter(message => {
+            const timestamp = Date.parse(message.timestamp);
+            return !Number.isFinite(timestamp) || timestamp >= cutoff;
+        });
     } catch {
         return [];
     }
@@ -66,6 +72,19 @@ function readMessages() {
 
 function writeMessages(messages) {
     fs.writeFileSync(chatFile, JSON.stringify(messages, null, 2), { mode: 0o600 });
+}
+
+function purgeExpiredMessages() {
+    try {
+        const messages = JSON.parse(fs.readFileSync(chatFile, 'utf8'));
+        if (!Array.isArray(messages)) return;
+        const cutoff = Date.now() - chatRetentionMs;
+        const remaining = messages.filter(message => {
+            const timestamp = Date.parse(message?.timestamp);
+            return !Number.isFinite(timestamp) || timestamp >= cutoff;
+        });
+        if (remaining.length !== messages.length) writeMessages(remaining);
+    } catch {}
 }
 
 function readAccounts() {
@@ -392,6 +411,9 @@ function serveStatic(request, response, pathname) {
         send(response, 200, request.method === 'HEAD' ? '' : file, contentTypes[path.extname(filePath)] || 'application/octet-stream');
     });
 }
+
+purgeExpiredMessages();
+setInterval(purgeExpiredMessages, 60 * 1000).unref();
 
 const server = http.createServer(async (request, response) => {
     const requestUrl = new URL(request.url, `http://${request.headers.host || 'localhost'}`);
