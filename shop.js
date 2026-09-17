@@ -2,6 +2,7 @@
     const ACCOUNT_KEY = 'lucky-jackpot-accounts';
     const CURRENT_KEY = 'lucky-jackpot-current-account';
     const LOCKER_KEY = 'lucky-jackpot-locker-v1';
+    const PROGRESSION_PREFIX = 'lucky-jackpot-progression-v2:';
     const ITEMS = [
         { id: 'neon', icon: '⚡', name: 'Neon Pulse', description: 'A bright cyber glow for your progression panel.', price: 150 },
         { id: 'royal', icon: '👑', name: 'Royal Crown', description: 'A gold-and-purple champion look.', price: 300 },
@@ -15,6 +16,7 @@
     const accounts = () => read(ACCOUNT_KEY, []);
     const locker = () => { const all = read(LOCKER_KEY, {}); const data = all[accountKey()] || { owned: ['starter'], equipped: 'starter' }; return { all, data }; };
     const saveLocker = (all, data) => { all[accountKey()] = data; localStorage.setItem(LOCKER_KEY, JSON.stringify(all)); };
+    const syncProgression = (id, equip = false) => { const key = PROGRESSION_PREFIX + accountKey(); const state = read(key, { version: 2, cosmeticsUnlocked: ['starter'], selectedCosmetic: 'starter' }); state.cosmeticsUnlocked = Array.isArray(state.cosmeticsUnlocked) ? state.cosmeticsUnlocked : ['starter']; if (!state.cosmeticsUnlocked.includes(id)) state.cosmeticsUnlocked.push(id); if (equip) state.selectedCosmetic = id; localStorage.setItem(key, JSON.stringify(state)); };
     const balance = () => { const found = accounts().find(item => item.email === account()?.email); return Math.max(0, Math.round(Number(found?.tokens ?? window.gameState?.credits ?? 1000))); };
     function render() {
         const { data } = locker(); const tokens = balance();
@@ -36,9 +38,11 @@
             if (typeof gameState !== 'undefined') gameState.credits = tokens - item.price;
             if (typeof updateOwnTokenBalance === 'function' && account()?.email) updateOwnTokenBalance(account().email, tokens - item.price).catch(() => {});
             state.data.owned.push(item.id); saveLocker(state.all, state.data);
+            syncProgression(item.id);
             if (typeof updateTokenCounter === 'function') updateTokenCounter();
         } else if (button.dataset.shopAction === 'equip' && (button.dataset.item === 'starter' || state.data.owned.includes(button.dataset.item))) {
             state.data.equipped = button.dataset.item; saveLocker(state.all, state.data);
+            syncProgression(button.dataset.item, true);
             document.documentElement.dataset.progressionCosmetic = button.dataset.item;
         }
         render();
