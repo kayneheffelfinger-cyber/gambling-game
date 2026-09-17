@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - Lucky Jackpot</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="navbar"><div class="container"><div class="logo">💎 Lucky Jackpot</div><nav class="nav-links"><a href="index.html">Games</a><a href="features.html">Features</a><a href="updates.html">Updates</a><a href="user.html">User</a><a href="leaderboard.html" aria-current="page">Leaderboard</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></nav><div class="auth-buttons"><div class="token-wallet">Tokens <strong id="token-count">1,000</strong></div><button class="btn-login">Login</button><button class="btn-signup">Sign Up</button><button class="btn-admin" type="button">Admin</button><button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="true">Light mode</button></div></div></header>
+    <main><section class="user-section"><div class="container user-profile"><span class="section-kicker">Community rankings</span><div class="updates-heading"><div><span class="section-kicker">Top ten</span><h1>Leaderboard</h1></div><p>Players with the most play-money tokens.</p></div><div id="leaderboard-list" class="leaderboard-list"><p class="user-history-note">Loading leaderboard…</p></div><a class="btn-primary" href="index.html#games">Play a game</a></div></section></main>
+    <script src="script.js"></script>
+    <script>
+        async function loadLeaderboard() {
+            const list = document.querySelector('#leaderboard-list');
+            try {
+                const response = await fetch('/api/leaderboard', { cache: 'no-store' });
+                if (!response.ok) throw new Error('Unavailable');
+                const players = await response.json();
+                list.innerHTML = players.length ? players.map((player, index) => `
+                    <article class="leaderboard-row ${index < 3 ? 'is-top' : ''}">
+                        <strong class="leaderboard-rank">${index + 1}</strong>
+                        <span class="leaderboard-name">${escapeHtml(player.name || 'Player')}</span>
+                        <strong class="leaderboard-tokens">${Number(player.tokens || 0).toLocaleString()} tokens</strong>
+                    </article>`).join('') : '<p class="user-history-empty">No players yet. Create an account to claim the top spot.</p>';
+            } catch (error) {
+                list.innerHTML = '<p class="user-history-note">The leaderboard is temporarily unavailable.</p>';
+            }
+        }
+        loadLeaderboard();
+    </script>
+</body>
+</html>
