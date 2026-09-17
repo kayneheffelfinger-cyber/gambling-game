@@ -349,6 +349,20 @@ async function handleAccountRequest(request, response) {
     }
 }
 
+function handleLeaderboardRequest(request, response) {
+    if (request.method !== 'GET') return send(response, 405, 'Method Not Allowed');
+    const leaderboard = readAccounts()
+        .map(account => ({ name: account.name, tokens: getPublicTokenBalance(account) }))
+        .sort((first, second) => second.tokens - first.tokens)
+        .slice(0, 10);
+    return sendJson(response, 200, leaderboard);
+}
+
+function getPublicTokenBalance(account) {
+    const tokens = Number(account?.tokens);
+    return Number.isFinite(tokens) ? Math.max(0, Math.round(tokens)) : 1000;
+}
+
 async function handlePresenceRequest(request, response) {
     if (request.method !== 'POST') return send(response, 405, 'Method Not Allowed');
     const account = getSessionAccount(request);
@@ -420,6 +434,7 @@ const server = http.createServer(async (request, response) => {
     if (requestUrl.pathname === '/api/chat') return handleChatRequest(request, response);
     if (requestUrl.pathname === '/api/accounts') return handleAccountRequest(request, response);
     if (requestUrl.pathname === '/api/presence') return handlePresenceRequest(request, response);
+    if (requestUrl.pathname === '/api/leaderboard') return handleLeaderboardRequest(request, response);
     if (requestUrl.pathname.startsWith('/api/auth/')) return handleAuthRequest(request, response, requestUrl.pathname);
     return serveStatic(request, response, requestUrl.pathname);
 });
