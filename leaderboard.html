@@ -9,6 +9,21 @@
 <body>
     <header class="navbar"><div class="container"><div class="logo">💎 Lucky Jackpot</div><nav class="nav-links"><a href="index.html">Games</a><a href="features.html">Features</a><a href="updates.html">Updates</a><a href="user.html">User</a><a href="leaderboard.html" aria-current="page">Leaderboard</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></nav><div class="auth-buttons"><div class="token-wallet">Tokens <strong id="token-count">1,000</strong></div><button class="btn-login">Login</button><button class="btn-signup">Sign Up</button><button class="btn-admin" type="button">Admin</button><button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="true">Light mode</button></div></div></header>
     <main><section class="user-section"><div class="container user-profile"><span class="section-kicker">Community rankings</span><div class="updates-heading"><div><span class="section-kicker">Top ten</span><h1>Leaderboard</h1></div><p>Players with the most play-money tokens.</p></div><div id="leaderboard-list" class="leaderboard-list"><p class="user-history-note">Loading leaderboard…</p></div><a class="btn-primary" href="index.html#games">Play a game</a></div></section></main>
+
+    <script>
+        window.__leaderboardLocalBalance = null;
+        try {
+            const currentAccount = JSON.parse(localStorage.getItem('lucky-jackpot-current-account') || 'null');
+            const savedAccounts = JSON.parse(localStorage.getItem('lucky-jackpot-accounts') || '[]');
+            const localAccount = Array.isArray(savedAccounts)
+                ? savedAccounts.find(account => account.email === currentAccount?.email)
+                : null;
+            const localTokens = Number(localAccount?.tokens);
+            if (currentAccount?.email && Number.isFinite(localTokens)) {
+                window.__leaderboardLocalBalance = { email: currentAccount.email, tokens: Math.max(0, Math.round(localTokens)) };
+            }
+        } catch (error) {}
+    </script>
     <script src="script.js"></script>
     <script src="events.js"></script>
     <script>
@@ -32,43 +47,36 @@
         }
 
         async function reconcileCurrentPlayerBalance() {
-            let currentAccount = null;
-            try {
-                currentAccount = JSON.parse(localStorage.getItem('lucky-jackpot-current-account') || 'null');
-            } catch (error) {
-                return;
-            }
-            if (!currentAccount?.email) return;
-
-            let localAccounts = [];
-            try {
-                const saved = JSON.parse(localStorage.getItem('lucky-jackpot-accounts') || '[]');
-                localAccounts = Array.isArray(saved) ? saved : [];
-            } catch (error) {
-                return;
-            }
-
-            const localAccount = localAccounts.find(account => account.email === currentAccount.email);
-            const localTokens = Number(localAccount?.tokens);
-            if (!Number.isFinite(localTokens)) return;
+            const localBalance = window.__leaderboardLocalBalance;
+            if (!localBalance?.email || !Number.isFinite(localBalance.tokens)) return;
 
             try {
                 const accountResponse = await fetch('/api/auth/me', { cache: 'no-store' });
                 if (!accountResponse.ok) return;
                 const serverAccount = await accountResponse.json();
                 const serverTokens = Number(serverAccount.tokens);
-                if (!Number.isFinite(serverTokens) || localTokens <= serverTokens) return;
+                if (!Number.isFinite(serverTokens) || localBalance.tokens <= serverTokens) return;
 
-                await fetch('/api/accounts', {
+                const response = await fetch('/api/accounts', {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: currentAccount.email, tokens: Math.round(localTokens) }),
+                    body: JSON.stringify({ email: localBalance.email, tokens: localBalance.tokens }),
                     keepalive: true,
                     cache: 'no-store'
                 });
-            } catch (error) {
-                // The next refresh will retry the reconciliation.
-            }
+                if (!response.ok) return;
+
+                try {
+                    const savedAccounts = JSON.parse(localStorage.getItem('lucky-jackpot-accounts') || '[]');
+                    if (Array.isArray(savedAccounts)) {
+                        const account = savedAccounts.find(item => item.email === localBalance.email);
+                        if (account) {
+                            account.tokens = localBalance.tokens;
+                            localStorage.setItem('lucky-jackpot-accounts', JSON.stringify(savedAccounts));
+                        }
+                    }
+                } catch (error) {}
+            } catch (error) {}
         }
 
         async function loadLeaderboard() {
