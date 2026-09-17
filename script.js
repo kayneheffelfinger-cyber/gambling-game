@@ -1111,7 +1111,7 @@ function handleUpdateSubmit(event) {
     const form = event.target;
     const formData = new FormData(form);
     const details = String(formData.get('details') || '')
-        .split('\n')
+        .split('\\n')
         .map(detail => detail.trim())
         .filter(Boolean)
         .slice(0, 10);
@@ -1426,6 +1426,8 @@ function formatWinPayout(winnings) {
     return `${winnings.toLocaleString()} credits (${formattedMultiplier}x multiplier)`;
 }
 
+let tokenSaveSequence = Promise.resolve();
+
 function updateCreditCounter() {
     const creditElement = document.querySelector('.credit-counter strong');
     if (creditElement) creditElement.textContent = gameState.credits;
@@ -1535,12 +1537,22 @@ function initializeUserPage() {
 
 function persistTokenBalance() {
     const currentAccount = getCurrentAccount();
-    if (!currentAccount) return;
+    if (!currentAccount?.email) return;
+    const email = currentAccount.email;
+    const tokens = Math.max(0, Math.round(Number(gameState.credits) || 0));
     const accounts = getSavedAccounts();
-    const savedAccount = accounts.find(account => account.email === currentAccount.email);
-    if (!savedAccount) return;
-    savedAccount.tokens = gameState.credits;
-    localStorage.setItem(accountStorageKey, JSON.stringify(accounts));
+    const savedAccount = accounts.find(account => account.email === email);
+    if (savedAccount) {
+        savedAccount.tokens = tokens;
+        localStorage.setItem(accountStorageKey, JSON.stringify(accounts));
+    }
+
+    // Queue server saves so rapid game actions are written in order. This keeps
+    // the server balance authoritative after a reload while preserving the local fallback.
+    tokenSaveSequence = tokenSaveSequence
+        .catch(() => {})
+        .then(() => updateOwnTokenBalance(email, tokens))
+        .catch(() => {});
 }
 
 function spinRoulette() {
