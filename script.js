@@ -84,6 +84,7 @@ const supportTicketsStorageKey = 'lucky-jackpot-support-tickets';
 const jackpotPoolStorageKey = 'lucky-jackpot-prize-pool';
 const jackpotEntryStorageKey = 'lucky-jackpot-entry-counts';
 const chatVisibilityStorageKey = 'lucky-jackpot-chat-open';
+const gameHistoryStorageKey = 'lucky-jackpot-game-history';
 const jackpotEntryLimit = 25;
 const bigWinThreshold = 50;
 const presenceOnlineWindow = 45 * 1000;
@@ -120,7 +121,7 @@ function initializeApp() {
     try { loadCurrentTokenBalance(); updateTokenCounter(); } catch (error) { console.error('Token initialization failed:', error); }
     try { startBankRefresh(); } catch (error) { console.error('Bank initialization failed:', error); }
     try { applyGameAvailability(); } catch (error) { console.error('Game availability failed:', error); }
-    try { startChatRefresh(); startPresenceRefresh(); restoreSession(); } catch (error) { console.error('Refresh initialization failed:', error); }
+    try { startChatRefresh(); startPresenceRefresh(); restoreSession(); initializeUserPage(); } catch (error) { console.error('Refresh initialization failed:', error); }
 }
 
 if (document.readyState === 'loading') {
@@ -1314,6 +1315,7 @@ function canPlay() {
     }
     gameState.currentBet = bet;
     gameState.credits -= bet;
+    recordGamePlay(gameState.game, bet);
     updateCreditCounter();
     return true;
 }
@@ -1387,6 +1389,72 @@ function updateCreditCounter() {
 function updateTokenCounter() {
     const tokenElement = document.querySelector('#token-count');
     if (tokenElement) tokenElement.textContent = gameState.credits.toLocaleString();
+}
+
+function getGameHistory() {
+    const email = getCurrentAccount()?.email;
+    if (!email) return [];
+    try {
+        const history = JSON.parse(localStorage.getItem(gameHistoryStorageKey) || '{}');
+        return Array.isArray(history[email]) ? history[email] : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function recordGamePlay(game, bet, result = 'Played', winnings = 0) {
+    const email = getCurrentAccount()?.email;
+    if (!email) return;
+    try {
+        const history = JSON.parse(localStorage.getItem(gameHistoryStorageKey) || '{}');
+        const playerHistory = Array.isArray(history[email]) ? history[email] : [];
+        playerHistory.unshift({
+            id: `play-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            game,
+            bet,
+            result,
+            winnings,
+            playedAt: new Date().toISOString()
+        });
+        history[email] = playerHistory.slice(0, 100);
+        localStorage.setItem(gameHistoryStorageKey, JSON.stringify(history));
+    } catch (error) {}
+}
+
+function initializeUserPage() {
+    const historyElement = document.querySelector('#user-game-history');
+    if (!historyElement) return;
+    const account = getCurrentAccount();
+    const nameElement = document.querySelector('#user-name');
+    const emailElement = document.querySelector('#user-email');
+    const tokenElement = document.querySelector('#user-token-balance');
+    const emptyElement = document.querySelector('#user-history-empty');
+    if (!account) {
+        if (nameElement) nameElement.textContent = 'Sign in to view your profile';
+        if (emailElement) emailElement.textContent = 'Your game history is saved per account.';
+        if (tokenElement) tokenElement.textContent = '—';
+        historyElement.innerHTML = '<p class="user-history-note">Please sign in on the Games page to see your past games.</p>';
+        if (emptyElement) emptyElement.hidden = true;
+        return;
+    }
+    if (nameElement) nameElement.textContent = account.name || 'Player';
+    if (emailElement) emailElement.textContent = account.email || '';
+    const savedAccount = getSavedAccounts().find(item => item.email === account.email);
+    if (tokenElement) tokenElement.textContent = getAccountTokens(savedAccount || account).toLocaleString();
+    const history = getGameHistory();
+    if (!history.length) {
+        historyElement.innerHTML = '';
+        if (emptyElement) emptyElement.hidden = false;
+        return;
+    }
+    if (emptyElement) emptyElement.hidden = true;
+    historyElement.innerHTML = history.map(play => `
+        <article class="user-history-row">
+            <div><strong>${escapeHtml(play.game)}</strong><span>${new Date(play.playedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span></div>
+            <div><span>Bet</span><strong>${Number(play.bet).toLocaleString()} tokens</strong></div>
+            <div><span>Result</span><strong>${escapeHtml(play.result)}</strong></div>
+            <div><span>Winnings</span><strong class="${Number(play.winnings) > 0 ? 'is-win' : ''}">${Number(play.winnings).toLocaleString()} tokens</strong></div>
+        </article>`).join('');
 }
 
 function persistTokenBalance() {
