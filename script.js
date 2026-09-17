@@ -720,7 +720,7 @@ function renderAccountModal(modal, mode, required, message = '') {
                 <p class="account-message" aria-live="polite">${message || (isCreate ? 'Use at least 10 characters. Never reuse a password from another service.' : isReset ? 'Enter your email, reset code, and a new password.' : '')}</p>
                 <button class="game-action" type="submit">${isCreate ? 'Create account' : isManage ? 'Sign out' : isReset ? 'Request reset code' : 'Log in'}</button>
             </form>
-            ${isManage ? '' : isReset ? '<button class="account-switch" type="button" data-action="switch-login">Back to log in</button>' : `<button class="account-switch" type="button" data-action="switch-account">${isCreate ? 'Already have an account? Log in' : 'Need an account? Create one'}</button>${!isCreate ? '<button class="account-switch" type="button" data-action="switch-reset">Forgot password?</button>' : ''}`}
+            ${isManage ? '' : isReset ? '<button class="account-switch" type="button" data-action="switch-login">Back to log in</button>' : `<button class="account-switch" type="button" data-action="switch-account">${isCreate ? 'Already have an account? Log in' : 'Need an account? Create one.'}</button>${!isCreate ? '<button class="account-switch" type="button" data-action="switch-reset">Forgot password?</button>' : ''}`}
         </div>`;
     modal.dataset.required = required ? 'true' : 'false';
 }
