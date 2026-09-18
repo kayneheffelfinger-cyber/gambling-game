@@ -3434,3 +3434,192 @@ body:not(.dark-mode) .bank-next strong{color:#17345b}
 .leaderboard-row.is-top { border-color: rgba(250, 204, 21, 0.5); box-shadow: 0 10px 30px var(--shadow); }
 @media (max-width: 560px) { .leaderboard-row { grid-template-columns: 2rem 1fr; } .leaderboard-tokens { grid-column: 2; } }
 
+
+
+/* High or Low game refresh */
+.highlow-stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    width: min(100%, 420px);
+}
+
+.highlow-card-wrap {
+    display: grid;
+    justify-items: center;
+    gap: .55rem;
+}
+
+.highlow-card-label {
+    color: #8fb8e8;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.highlow-card {
+    position: relative;
+    display: grid;
+    width: 112px;
+    height: 156px;
+    place-items: center;
+    overflow: hidden;
+    border: 2px solid #c7d7ef;
+    border-radius: 14px;
+    background: linear-gradient(145deg, #ffffff 0%, #edf5ff 100%);
+    color: #101827;
+    box-shadow: 0 14px 32px rgba(0,0,0,.35), inset 0 0 0 3px rgba(8,124,255,.08);
+}
+
+.highlow-card::after {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 1px solid rgba(16,24,39,.1);
+    border-radius: 9px;
+    pointer-events: none;
+}
+
+.highlow-card.is-red {
+    color: #c32945;
+}
+
+.highlow-card.is-placeholder {
+    background:
+        linear-gradient(135deg, rgba(42,167,255,.15), transparent 45%),
+        linear-gradient(145deg, #0b2b55, #061630);
+    border-color: rgba(42,167,255,.75);
+    color: #7fc8ff;
+    box-shadow: 0 14px 32px rgba(0,0,0,.35), inset 0 0 28px rgba(42,167,255,.12);
+}
+
+.highlow-card strong {
+    font-size: 3.5rem;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: -.05em;
+}
+
+.highlow-card-corner {
+    position: absolute;
+    top: 11px;
+    left: 12px;
+    display: grid;
+    line-height: .9;
+    font-size: 1rem;
+    font-weight: 900;
+    z-index: 1;
+}
+
+.highlow-card-corner small {
+    font-size: .9rem;
+    line-height: 1;
+}
+
+.highlow-card-corner.bottom {
+    top: auto;
+    left: auto;
+    right: 12px;
+    bottom: 11px;
+    transform: rotate(180deg);
+}
+
+.highlow-arrow {
+    color: #ffd447;
+    font-size: 2rem;
+    font-weight: 900;
+    text-shadow: 0 0 16px rgba(255,212,71,.2);
+}
+
+.highlow-choice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .75rem;
+    width: min(100%, 420px);
+}
+
+.highlow-choice {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    min-height: 74px;
+    padding: .8rem 1rem;
+    border: 1px solid rgba(42,167,255,.35);
+    border-radius: 14px;
+    background: rgba(4,24,56,.75);
+    color: #f4f8ff;
+    cursor: pointer;
+    text-align: left;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.highlow-choice:hover {
+    transform: translateY(-2px);
+    border-color: rgba(42,167,255,.8);
+    background: rgba(8,47,91,.9);
+}
+
+.highlow-choice.is-selected {
+    border-color: #ffd447;
+    background: linear-gradient(135deg, rgba(255,212,71,.16), rgba(8,47,91,.9));
+    box-shadow: 0 0 0 1px rgba(255,212,71,.18), 0 10px 24px rgba(0,0,0,.2);
+}
+
+.highlow-choice-icon {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    place-items: center;
+    border-radius: 11px;
+    background: #0a6ed1;
+    color: white;
+    font-size: 1.45rem;
+    font-weight: 900;
+}
+
+.highlow-choice.is-selected .highlow-choice-icon {
+    background: #ffd447;
+    color: #152033;
+}
+
+.highlow-choice strong,
+.highlow-choice small {
+    display: block;
+}
+
+.highlow-choice strong {
+    font-size: 1rem;
+}
+
+.highlow-choice small {
+    margin-top: .18rem;
+    color: #9eb9dc;
+    font-size: .72rem;
+}
+
+.highlow-draw-action {
+    min-width: 180px;
+    box-shadow: 0 10px 25px rgba(0,0,0,.24);
+}
+
+@media (max-width: 560px) {
+    .highlow-stage {
+        grid-template-columns: 1fr;
+    }
+
+    .highlow-arrow {
+        transform: rotate(90deg);
+    }
+
+    .highlow-card {
+        width: 104px;
+        height: 146px;
+    }
+
+    .highlow-choice-grid {
+        grid-template-columns: 1fr;
+    }
+}
