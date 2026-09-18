@@ -30,6 +30,10 @@ const gameState = {
     wheelResult: null,
     highlowResult: null,
     highlowChoice: 'higher',
+    minesResult: null,
+    numberGuessResult: null,
+    redBlackResult: null,
+    plinkoResult: null,
     currentBet: 10
 };
 
@@ -100,7 +104,11 @@ const defaultGameAvailability = {
     coinflip: true,
     jackpot: true,
     keno: true,
-    baccarat: true
+    baccarat: true,
+    mines: true,
+    numberguess: true,
+    redblack: true,
+    plinko: true
 };
 let adminSession = false;
 let chatMessagesCache = [];
@@ -984,7 +992,7 @@ function adminTabContent(activeTab, accounts, currentAccount, totalTokens) {
 
     if (activeTab === 'games') {
         const availability = getGameAvailability();
-        const gameNames = { slots: 'Slots', poker: 'Poker', dice: 'Dice', roulette: 'Roulette', blackjack: 'Blackjack', coinflip: 'Coin Flip', keno: 'Keno', baccarat: 'Baccarat', jackpot: 'Lucky Jackpot' };
+        const gameNames = { slots: 'Slots', poker: 'Poker', dice: 'Dice', roulette: 'Roulette', blackjack: 'Blackjack', coinflip: 'Coin Flip', keno: 'Keno', baccarat: 'Baccarat', mines: 'Mines', numberguess: 'Number Guess', redblack: 'Red or Black', plinko: 'Plinko', jackpot: 'Lucky Jackpot' };
         return `
             <div class="admin-section-heading"><h3>Game availability</h3><span>Close a broken game</span></div>
             <div class="admin-game-list">${Object.entries(gameNames).map(([game, name]) => {
@@ -1204,6 +1212,10 @@ function renderGame(message = 'Demo credits only. No real money is used.') {
         coinflip: 'Coin Flip',
         keno: 'Keno',
         baccarat: 'Baccarat',
+        mines: 'Mines',
+        numberguess: 'Number Guess',
+        redblack: 'Red or Black',
+        plinko: 'Plinko',
         jackpot: 'Lucky Jackpot',
         wheel: 'Prize Wheel',
         highlow: 'High or Low'
@@ -1313,6 +1325,61 @@ function gameMarkup() {
             </select>
             <p class="game-help">Player and Banker pay 20 credits. A tie pays 90.</p>
             <button class="game-action" type="button" data-action="deal-baccarat">Deal hand</button>`;
+    }
+
+
+    if (gameState.game === 'mines') {
+        const result = gameState.minesResult;
+        const revealed = result?.revealed || 0;
+        return `
+            <div class="mines-board">
+                ${Array.from({ length: 9 }, (_, index) => {
+                    const tile = result?.tiles?.[index] || 'hidden';
+                    return \`<button class="mine-tile ${tile}" type="button" data-action="pick-mine" data-index="${index}" ${tile !== 'hidden' ? 'disabled' : ''}>${tile === 'safe' ? '◆' : tile === 'mine' ? '💣' : '?'}</button>\`;
+                }).join('')}
+            </div>
+            <p class="game-help">Pick one hidden tile. Safe picks pay 2x your bet; a mine ends the round.</p>
+            <div class="game-stat-row"><span>Safe picks</span><strong>${revealed}/1</strong></div>
+            <button class="game-action" type="button" data-action="reset-mines">${revealed ? 'Play Again' : 'Reveal a Tile'}</button>`;
+    }
+
+    if (gameState.game === 'numberguess') {
+        const result = gameState.numberGuessResult;
+        return `
+            <div class="number-guess-display"><span>Hidden number</span><strong>${result?.number ?? '?'}</strong></div>
+            <div class="number-guess-grid">
+                ${Array.from({ length: 10 }, (_, index) => {
+                    const number = index + 1;
+                    return \`<button class="number-choice ${result?.guess === number ? 'is-selected' : ''}" type="button" data-action="guess-number" data-number="${number}" ${result ? 'disabled' : ''}>${number}</button>\`;
+                }).join('')}
+            </div>
+            <p class="game-help">Pick the exact hidden number from 1–10. An exact hit pays 8x your bet.</p>
+            ${result ? '<button class="game-action" type="button" data-action="reset-number-guess">Guess Again</button>' : '<div class="game-hint">Choose a number above.</div>'}`;
+    }
+
+    if (gameState.game === 'redblack') {
+        const result = gameState.redBlackResult;
+        return `
+            <div class="color-result ${result ? (result.color === 'red' ? 'is-red' : 'is-black') : ''}">${result?.color ? result.color.toUpperCase() : '?'}</div>
+            <div class="color-choice-grid">
+                <button class="color-choice is-red" type="button" data-action="choose-redblack" data-color="red" ${result ? 'disabled' : ''}>🔴 Red</button>
+                <button class="color-choice is-black" type="button" data-action="choose-redblack" data-color="black" ${result ? 'disabled' : ''}>⚫ Black</button>
+            </div>
+            <p class="game-help">Pick a color. A matching draw pays 2x your bet.</p>
+            ${result ? '<button class="game-action" type="button" data-action="reset-redblack">Draw Again</button>' : '<div class="game-hint">Choose Red or Black.</div>'}`;
+    }
+
+    if (gameState.game === 'plinko') {
+        const result = gameState.plinkoResult;
+        const multipliers = [0, 0.5, 1, 1.5, 2, 3, 5, 10];
+        return `
+            <div class="plinko-board">
+                <div class="plinko-track">${Array.from({ length: 18 }, (_, index) => \`<span style="--i:${index}">•</span>\`).join('')}</div>
+                <div class="plinko-ball ${result ? 'has-result' : ''}">${result ? result.multiplier + 'x' : '●'}</div>
+            </div>
+            <div class="plinko-multipliers">${multipliers.map(value => \`<span class="${result?.multiplier === value ? 'is-hit' : ''}">${value}x</span>\`).join('')}</div>
+            <p class="game-help">Every drop is random. The multiplier applies to your current bet.</p>
+            <button class="game-action" type="button" data-action="drop-plinko">${result ? 'Drop Again' : 'Drop Ball'}</button>`;
     }
 
     if (gameState.game === 'jackpot') {
@@ -1842,6 +1909,86 @@ function drawHighLow() {
     updateCreditCounter();
     publishBigWin('High or Low', winnings);
     renderGame(tie ? `Both cards were ${first}. Your stake was returned.` : won ? `Correct call! ${first} to ${second}. You won ${formatWinPayout(winnings)}.` : `${first} to ${second} — your call missed.`);
+}
+
+
+function pickMine(index) {
+    if (!Number.isInteger(index) || index < 0 || index > 8 || gameState.minesResult?.revealed) return;
+    if (!canPlay()) return;
+    const mineIndex = Math.floor(Math.random() * 9);
+    const tiles = Array(9).fill('hidden');
+    if (index === mineIndex) {
+        tiles[index] = 'mine';
+        gameState.minesResult = { tiles, revealed: 0 };
+        completeGamePlay('Lost (mine)', 0);
+        updateCreditCounter();
+        renderGame('💥 Mine! Your bet was lost.');
+        return;
+    }
+    tiles[index] = 'safe';
+    gameState.minesResult = { tiles, revealed: 1 };
+    const winnings = getBetPayout(2);
+    gameState.credits += winnings;
+    completeGamePlay('Won (safe tile)', winnings);
+    updateCreditCounter();
+    publishBigWin('Mines', winnings);
+    renderGame('💎 Safe tile! You doubled your bet.');
+}
+
+function resetMines() {
+    gameState.minesResult = null;
+    renderGame('Pick one hidden tile. Good luck.');
+}
+
+function guessNumber(number) {
+    if (!Number.isInteger(number) || number < 1 || number > 10 || gameState.numberGuessResult) return;
+    if (!canPlay()) return;
+    const hidden = Math.floor(Math.random() * 10) + 1;
+    const won = number === hidden;
+    const winnings = won ? getBetPayout(8) : 0;
+    gameState.numberGuessResult = { number: hidden, guess: number };
+    gameState.credits += winnings;
+    completeGamePlay(won ? `Won (guessed ${hidden})` : `Lost (number was ${hidden})`, winnings);
+    updateCreditCounter();
+    if (won) publishBigWin('Number Guess', winnings);
+    renderGame(won ? `🎯 Exact hit! You won ${formatWinPayout(winnings)}.` : `The number was ${hidden}. Try another guess.`);
+}
+
+function resetNumberGuess() {
+    gameState.numberGuessResult = null;
+    renderGame('Pick a number from 1 to 10.');
+}
+
+function chooseRedBlack(color) {
+    if (!['red', 'black'].includes(color) || gameState.redBlackResult) return;
+    if (!canPlay()) return;
+    const result = Math.random() < 0.5 ? 'red' : 'black';
+    const won = result === color;
+    const winnings = won ? getBetPayout(2) : 0;
+    gameState.redBlackResult = { color: result, choice: color };
+    gameState.credits += winnings;
+    completeGamePlay(won ? `Won (${result})` : `Lost (${result})`, winnings);
+    updateCreditCounter();
+    if (won) publishBigWin('Red or Black', winnings);
+    renderGame(won ? `🎉 Match! You won ${formatWinPayout(winnings)}.` : `It landed ${result}. Your color missed.`);
+}
+
+function resetRedBlack() {
+    gameState.redBlackResult = null;
+    renderGame('Choose a color.');
+}
+
+function dropPlinko() {
+    if (!canPlay()) return;
+    const multipliers = [0, 0.5, 1, 1.5, 2, 3, 5, 10];
+    const multiplier = multipliers[Math.floor(Math.random() * multipliers.length)];
+    const winnings = multiplier ? getBetPayout(multiplier) : 0;
+    gameState.plinkoResult = { multiplier };
+    gameState.credits += winnings;
+    completeGamePlay(winnings ? `Won (${multiplier}x Plinko)` : 'Lost (0x Plinko)', winnings);
+    updateCreditCounter();
+    if (winnings) publishBigWin('Plinko', winnings);
+    renderGame(multiplier ? `The ball landed on ${multiplier}x. You won ${formatWinPayout(winnings)}.` : 'The ball landed on 0x. No payout this time.');
 }
 
 function enterJackpot() {
