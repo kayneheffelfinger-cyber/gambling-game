@@ -1340,7 +1340,7 @@ function gameMarkup() {
             </div>
             <p class="game-help">Pick one hidden tile. Safe picks pay 2x your bet; a mine ends the round.</p>
             <div class="game-stat-row"><span>Safe picks</span><strong>${revealed}/1</strong></div>
-            <button class="game-action" type="button" data-action="reset-mines">${revealed ? 'Play Again' : 'Reveal a Tile'}</button>`;
+            ${revealed ? '<button class="game-action" type="button" data-action="reset-mines">Play Again</button>' : '<div class="game-hint">Pick one hidden tile above.</div>'}`;
     }
 
     if (gameState.game === 'numberguess') {
@@ -1474,6 +1474,13 @@ function handleGameClick(event) {
     if (action === 'toggle-keno-number') toggleKenoNumber(Number(event.target.closest('[data-number]')?.dataset.number));
     if (action === 'draw-keno') drawKeno();
     if (action === 'deal-baccarat') dealBaccarat();
+    if (action === 'pick-mine') pickMine(Number(event.target.closest('[data-index]')?.dataset.index));
+    if (action === 'reset-mines') resetMines();
+    if (action === 'guess-number') guessNumber(Number(event.target.closest('[data-number]')?.dataset.number));
+    if (action === 'reset-number-guess') resetNumberGuess();
+    if (action === 'choose-redblack') chooseRedBlack(event.target.closest('[data-color]')?.dataset.color);
+    if (action === 'reset-redblack') resetRedBlack();
+    if (action === 'drop-plinko') dropPlinko();
     if (action === 'enter-jackpot') enterJackpot();
     if (action === 'spin-wheel') spinWheel();
     if (action === 'choose-highlow') {
