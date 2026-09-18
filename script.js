@@ -29,6 +29,7 @@ const gameState = {
     baccaratResult: null,
     wheelResult: null,
     highlowResult: null,
+    highlowChoice: 'higher',
     currentBet: 10
 };
 
@@ -1331,12 +1332,49 @@ function gameMarkup() {
     }
 
     if (gameState.game === 'highlow') {
+        const result = gameState.highlowResult;
+        const first = Number(result?.first);
+        const second = Number(result?.second);
+        const formatHighLowRank = value => {
+            if (!Number.isFinite(value) || value < 1) return '?';
+            return value === 1 ? 'A' : value === 11 ? 'J' : value === 12 ? 'Q' : value === 13 ? 'K' : String(value);
+        };
+        const firstRank = formatHighLowRank(first);
+        const secondRank = formatHighLowRank(second);
+        const firstSuit = result?.firstSuit || '♠';
+        const secondSuit = result?.secondSuit || '♥';
         return `
-            <div class="roulette-number" data-highlow-result>${gameState.highlowResult ?? '?'}</div>
-            <label class="game-label" for="highlow-choice">Your call</label>
-            <select class="game-select" id="highlow-choice"><option value="higher">Higher</option><option value="lower">Lower</option></select>
-            <p class="game-help">A correct guess pays 2x your bet. Ties return your stake.</p>
-            <button class="game-action" type="button" data-action="draw-highlow">Draw card</button>`;
+            <div class="highlow-stage" aria-label="High or Low card comparison">
+                <div class="highlow-card-wrap">
+                    <span class="highlow-card-label">Current card</span>
+                    <div class="highlow-card ${firstRank === '?' ? 'is-placeholder' : (firstSuit === '♥' || firstSuit === '♦' ? 'is-red' : '')}">
+                        <span class="highlow-card-corner">${firstRank}<small>${firstSuit}</small></span>
+                        <strong>${firstRank}</strong>
+                        <span class="highlow-card-corner bottom">${firstRank}<small>${firstSuit}</small></span>
+                    </div>
+                </div>
+                <div class="highlow-arrow" aria-hidden="true">→</div>
+                <div class="highlow-card-wrap">
+                    <span class="highlow-card-label">Next card</span>
+                    <div class="highlow-card ${secondRank === '?' ? 'is-placeholder' : (secondSuit === '♥' || secondSuit === '♦' ? 'is-red' : '')}">
+                        <span class="highlow-card-corner">${secondRank}<small>${secondSuit}</small></span>
+                        <strong>${secondRank}</strong>
+                        <span class="highlow-card-corner bottom">${secondRank}<small>${secondSuit}</small></span>
+                    </div>
+                </div>
+            </div>
+            <div class="highlow-choice-grid" role="group" aria-label="Choose higher or lower">
+                <button class="highlow-choice ${gameState.highlowChoice === 'higher' ? 'is-selected' : ''}" type="button" data-action="choose-highlow" data-choice="higher" aria-pressed="${gameState.highlowChoice === 'higher'}">
+                    <span class="highlow-choice-icon">↑</span>
+                    <span><strong>Higher</strong><small>Next card is higher</small></span>
+                </button>
+                <button class="highlow-choice ${gameState.highlowChoice === 'lower' ? 'is-selected' : ''}" type="button" data-action="choose-highlow" data-choice="lower" aria-pressed="${gameState.highlowChoice === 'lower'}">
+                    <span class="highlow-choice-icon">↓</span>
+                    <span><strong>Lower</strong><small>Next card is lower</small></span>
+                </button>
+            </div>
+            <p class="game-help">A correct guess pays 2× your bet. Matching cards return your stake.</p>
+            <button class="game-action highlow-draw-action" type="button" data-action="draw-highlow">Draw next card</button>`;
     }
 
     return `
@@ -1371,6 +1409,13 @@ function handleGameClick(event) {
     if (action === 'deal-baccarat') dealBaccarat();
     if (action === 'enter-jackpot') enterJackpot();
     if (action === 'spin-wheel') spinWheel();
+    if (action === 'choose-highlow') {
+        const choice = event.target.closest('[data-choice]')?.dataset.choice;
+        if (choice === 'higher' || choice === 'lower') {
+            gameState.highlowChoice = choice;
+            renderGame('Choice locked in. Draw the next card.');
+        }
+    }
     if (action === 'draw-highlow') drawHighLow();
 }
 
@@ -1785,11 +1830,13 @@ function drawHighLow() {
     if (!canPlay()) return;
     const first = Math.floor(Math.random() * 13) + 1;
     const second = Math.floor(Math.random() * 13) + 1;
-    const choice = document.querySelector('#highlow-choice')?.value;
+    const choice = gameState.highlowChoice === 'lower' ? 'lower' : 'higher';
+    const firstSuit = cardSuits[Math.floor(Math.random() * cardSuits.length)];
+    const secondSuit = cardSuits[Math.floor(Math.random() * cardSuits.length)];
     const tie = first === second;
     const won = !tie && (choice === 'higher' ? second > first : second < first);
     const winnings = tie ? gameState.currentBet : won ? getBetPayout(2) : 0;
-    gameState.highlowResult = `${first} → ${second}`;
+    gameState.highlowResult = { first, second, firstSuit, secondSuit };
     gameState.credits += winnings;
     completeGamePlay(tie ? `Tie (${first})` : won ? `Won (${first} to ${second})` : `Lost (${first} to ${second})`, winnings);
     updateCreditCounter();
