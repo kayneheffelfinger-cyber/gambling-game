@@ -4890,3 +4890,51 @@ body:not(.dark-mode) .profile-editor input {
         transition-duration: .001ms !important;
     }
 }
+
+
+/* Fix game artwork stacking so icons never cover titles/descriptions. */
+.game-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+}
+
+.game-card .game-icon {
+    position: relative !important;
+    z-index: 2 !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 58px !important;
+    height: 58px !important;
+    min-width: 58px !important;
+    min-height: 58px !important;
+    margin: 0 0 14px !important;
+    flex: 0 0 58px !important;
+}
+
+.game-card .jackpot-label,
+.game-card h3,
+.game-card p,
+.game-card .btn-play {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+.game-card .jackpot-label {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.game-card h3,
+.game-card p {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.game-card p {
+    flex: 1 1 auto;
+}
+
+.game-card::before {
+    z-index: 0 !important;
+}
