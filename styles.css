@@ -6259,3 +6259,75 @@ button:disabled {
         transition-duration: .01ms !important;
     }
 }
+
+
+/* FINAL NAV OVERFLOW FIX: keep the leaderboard and every nav item
+   completely clear of the wallet/auth controls. */
+.navbar .container {
+    min-width: 0 !important;
+}
+
+.nav-links {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    justify-content: flex-start !important;
+    scrollbar-width: none;
+}
+
+.nav-links::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-links a {
+    flex: 0 0 auto !important;
+}
+
+.auth-buttons {
+    flex: 0 0 auto !important;
+    min-width: max-content !important;
+    margin-left: 0 !important;
+}
+
+.token-wallet {
+    flex: 0 0 auto !important;
+}
+
+/* On wide screens, give the navigation its own bounded area so the
+   wallet can never sit on top of the final tab. */
+@media (min-width: 1041px) {
+    .navbar .container {
+        display: grid !important;
+        grid-template-columns: auto minmax(0, 1fr) auto !important;
+        align-items: center !important;
+    }
+
+    .nav-links {
+        width: 100% !important;
+    }
+
+    .auth-buttons {
+        justify-self: end;
+    }
+}
+
+/* Below desktop width, the nav gets a full row and never competes
+   with the wallet/auth controls. */
+@media (max-width: 1040px) {
+    .navbar .container {
+        display: flex !important;
+        flex-wrap: wrap !important;
+    }
+
+    .nav-links {
+        order: 3 !important;
+        flex: 1 0 100% !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .auth-buttons {
+        margin-left: auto !important;
+    }
+}
