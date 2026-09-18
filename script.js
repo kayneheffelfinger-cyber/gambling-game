@@ -1335,7 +1335,7 @@ function gameMarkup() {
             <div class="mines-board">
                 ${Array.from({ length: 9 }, (_, index) => {
                     const tile = result?.tiles?.[index] || 'hidden';
-                    return \`<button class="mine-tile ${tile}" type="button" data-action="pick-mine" data-index="${index}" ${tile !== 'hidden' ? 'disabled' : ''}>${tile === 'safe' ? '◆' : tile === 'mine' ? '💣' : '?'}</button>\`;
+                    return `<button class="mine-tile ${tile}" type="button" data-action="pick-mine" data-index="${index}" ${tile !== 'hidden' ? 'disabled' : ''}>${tile === 'safe' ? '◆' : tile === 'mine' ? '💣' : '?'}</button>`;
                 }).join('')}
             </div>
             <p class="game-help">Pick one hidden tile. Safe picks pay 2x your bet; a mine ends the round.</p>
@@ -1350,7 +1350,7 @@ function gameMarkup() {
             <div class="number-guess-grid">
                 ${Array.from({ length: 10 }, (_, index) => {
                     const number = index + 1;
-                    return \`<button class="number-choice ${result?.guess === number ? 'is-selected' : ''}" type="button" data-action="guess-number" data-number="${number}" ${result ? 'disabled' : ''}>${number}</button>\`;
+                    return `<button class="number-choice ${result?.guess === number ? 'is-selected' : ''}" type="button" data-action="guess-number" data-number="${number}" ${result ? 'disabled' : ''}>${number}</button>`;
                 }).join('')}
             </div>
             <p class="game-help">Pick the exact hidden number from 1–10. An exact hit pays 8x your bet.</p>
@@ -1374,10 +1374,10 @@ function gameMarkup() {
         const multipliers = [0, 0.5, 1, 1.5, 2, 3, 5, 10];
         return `
             <div class="plinko-board">
-                <div class="plinko-track">${Array.from({ length: 18 }, (_, index) => \`<span style="--i:${index}">•</span>\`).join('')}</div>
+                <div class="plinko-track">${Array.from({ length: 18 }, (_, index) => `<span style="--i:${index}">•</span>`).join('')}</div>
                 <div class="plinko-ball ${result ? 'has-result' : ''}">${result ? result.multiplier + 'x' : '●'}</div>
             </div>
-            <div class="plinko-multipliers">${multipliers.map(value => \`<span class="${result?.multiplier === value ? 'is-hit' : ''}">${value}x</span>\`).join('')}</div>
+            <div class="plinko-multipliers">${multipliers.map(value => `<span class="${result?.multiplier === value ? 'is-hit' : ''}">${value}x</span>`).join('')}</div>
             <p class="game-help">Every drop is random. The multiplier applies to your current bet.</p>
             <button class="game-action" type="button" data-action="drop-plinko">${result ? 'Drop Again' : 'Drop Ball'}</button>`;
     }
