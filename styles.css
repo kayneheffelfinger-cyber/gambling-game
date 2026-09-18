@@ -4938,3 +4938,17 @@ body:not(.dark-mode) .profile-editor input {
 .game-card::before {
     z-index: 0 !important;
 }
+
+
+/* Move game icons higher while keeping title text in its own layout space. */
+.game-card .game-icon {
+    top: -10px !important;
+    margin-bottom: 4px !important;
+}
+
+@media (max-width: 640px) {
+    .game-card .game-icon {
+        top: -6px !important;
+        margin-bottom: 6px !important;
+    }
+}
